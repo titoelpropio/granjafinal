@@ -164,11 +164,32 @@ function validarcontrol(){
     }
 }
 function validarcontroledad() {
-  if ($('#edad_min_e').val()=="" || $('#edad_max_E').val()=="" || $('#id_alimento_e').val()==0) {
+  if ($('#edad_min_e').val()=="" || $('#edad_max_e').val()=="" || $('#id_alimento_e').val()==0) {
+
 toastr.error('LE FALTA INTRODUCIR DATOS');
         return false;
 
   } else{
+    if ($('#edad_min_e').val() >= $('#edad_max_e').val()) {
+toastr.error('La Edad Minima tiene que ser menor a la Maxima');
+
+       return false;  
+    }
+    return true;
+    }
+}
+
+function validarcontroltemp() {
+  if ($('#temp_max_a').val()=="" || $('#temp_min_a').val()=="" ) {
+toastr.error('LE FALTA INTRODUCIR DATOS');
+        return false;
+
+  } else{
+     if ($('#temp_min_a').val() >= $('#temp_max_a').val()) {
+toastr.error('La Temperatura minima tiene que ser menor a la Maxima');
+
+       return false;  
+    }
     return true;
     }
 }

@@ -2,6 +2,8 @@
 @section('content')
 @include('alerts.cargando')
 @include('alerts.success')
+@include('alerts.errors')
+
 @include('alerts.request')
 
 

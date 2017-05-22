@@ -198,19 +198,19 @@
       </div>
 
       <div class="modal-body">
-      {!!Form::open(array('url'=>'AgregarGrupoTemp','method'=>'POST','autocomplete'=>'off'))!!}
+      {!!Form::open(array('url'=>'AgregarGrupoTemp','method'=>'POST','autocomplete'=>'off','onsubmit'=>'javascript: return validarcontroltemp()'))!!}
    <input type="hidden" id="id_grupo_control" name="id_grupo_control">
 
 <div class="form-group">  
 <label for="edad_min  ">Temperatura Minima </label>
-<input type="number" name="temp_min" class="form-control" placeholder="Introduzca la Edad Minima" >
+<input type="number" name="temp_min" id="temp_min_a" class="form-control" placeholder="Introduzca la Edad Minima" >
 
 </div>
 <label for="edad_max">Temperatura Máxima </label>
 <div class="form-group"> 
 
 
-<input type="number" name="temp_max" class="form-control" placeholder="Introduzca la Edad Maxima" >
+<input type="number" name="temp_max" id="temp_max_a" class="form-control" placeholder="Introduzca la Edad Maxima" >
 
 </div>
 
@@ -240,6 +240,38 @@
 
       <div class="modal-footer">
       <button class="btn btn-primary" type="submit" >REGISTRAR</button>
+      <button data-dismiss="modal"  class="btn btn-danger">CANCELAR</button>
+       {!!Form::close()!!}      
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- este modal agrega una edad  minima o maxima -->
+<div class="modal fade" id="myModalReplicar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="titulogalpon" class="modal-title" >Replicar Control</h3>
+      </div>
+
+      <div class="modal-body">
+ <select class="form-control" name="id_grupo_control" id="">
+  <option value="0">Seleccione un Grupo</option>
+   @foreach ($grupo as $cons)
+  <option value="{{$cons->id}}">{{$cons->nro_grupo}}</option>
+    @endforeach 
+ </select>
+    
+     
+</div>
+
+      <div class="modal-footer">
+      <button class="btn btn-primary">Replicar</button>
       <button data-dismiss="modal"  class="btn btn-danger">CANCELAR</button>
        {!!Form::close()!!}      
 

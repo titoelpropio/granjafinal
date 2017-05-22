@@ -365,6 +365,7 @@ Route::get('eliminar_controlalimento/{id_control}','ControlAlimentoController@de
 Route::get('mostrar_control/{id_control}','ControlAlimentoController@mostrar_control');//este se encarga de mostrar todo el control de alimento con sus respectivos grupos
 Route::resource('AgregarGrupoEdad','ControlAlimentoController@AgregarGrupoEdad');//este agrega una edad minima y maxima con sus respectivas temperaturas
 Route::resource('AgregarGrupoTemp','ControlAlimentoController@AgregarGrupoTemp');//este agrega una temp minima y maxima con sus respectivas edades
+Route::get('ReplicarControl','ControlAlimentoController@ReplicarControl');
 Route::get('CargarModalAgregaredad/{id}','ControlAlimentoController@CargarModalAgregaredad');
 Route::get('CargarModalAgregartemp/{id}','ControlAlimentoController@CargarModalAgregartemp');
 
