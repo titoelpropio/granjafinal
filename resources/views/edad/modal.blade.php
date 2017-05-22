@@ -83,7 +83,20 @@
                 {!!Form::label('id_galpon','Galpon:')!!}
                 {!!Form::select('id_galpon',[],null,['id'=>'id_galpon'])!!}
             </div>
+            <div class="form-group">
+                {!!Form::label('contro_alimento','contro_alimento:')!!}
+               
+                <select name="id_control_alimento" id="id_control_alimento" class="form-control">
+                <option value="0">Seleccione un Control de Alimento</option>
+                    <?php 
+                        for ($i=0; $i <count($contro_alimento) ; $i++) { 
+                            echo "<option value=".$contro_alimento[$i]->id.">".$contro_alimento[$i]->nro_grupo;
+                        }
+                     ?>
 
+                </select>
+            </div>
+            
             <div class="form-group">
                 {!!Form::label('cantidad_inicial','Cantidad Inicial: ')!!}
                 {!!Form::text('cantidad_inicial',null,['id'=>'cantidad_inicial','class'=>'form-control','placeholder'=>'Ingrese La Cantidad Inicial','onkeypress'=>'return bloqueo_de_punto(event)'])!!}
@@ -331,4 +344,6 @@
         </div>
     </div>
 </div>
+
+
 

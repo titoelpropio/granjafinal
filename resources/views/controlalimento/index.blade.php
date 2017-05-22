@@ -35,7 +35,7 @@
 	<!--table class="table table-striped table-bordered table-condensed table-hover"-->
     <div class="table-responsive">
 <h1>CONTROL DE ALIMENTO</h1> 
-    <button class="btn btn-success" data-toggle='modal' data-target='#myModal' onclick="limpiar_text()" >AGREGAR</button>
+    <button class="btn btn-success" data-toggle='modal' data-target='#myModalReplicar' >Replicar</button>
 <div class="pull-right"></div>
      <table id="detalles" class="table table-striped table-bordered table-condensed table-hover">
                      

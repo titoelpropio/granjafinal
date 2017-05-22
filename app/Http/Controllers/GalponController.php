@@ -182,7 +182,8 @@ public function update_galpon(Request $request) {
     if($request->ajax()){
       DB::table('galpon')->insert([
         'numero' => $request->numero,
-        'capacidad_total' => $request->capacidad_total]);          
+        'capacidad_total' => $request->capacidad_total
+      ]);    
         return response()->json($request->all());
         }
     }

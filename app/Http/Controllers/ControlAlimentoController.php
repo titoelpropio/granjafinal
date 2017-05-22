@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\ControlAlimento;
 use App\Alimento;
 use App\RangoEdad;
-use App\Grupo_Control_Alimento;
+use App\Grupo_control_alimento;
 use App\GrupoEdad;
 use App\GrupoTemperatura;
 use App\Galpon;
@@ -46,10 +46,7 @@ $alimento=DB::select('select tipo , id from alimento where deleted_at IS NULL an
       $recorrer_cantidad=0;//este se encarga de ir recorriendo todas las cantidades
         $total_temperatura=$request['total_temperatura'];
 
-        $contar_grupo=DB::select('SELECT count(*) as count FROM `grupo_control_alimento` where deleted_at IS NULL');
-        $cantidad_grupo=$contar_grupo[0]->count+1;
         // $id_grupo=DB::table('grupo_control_alimento')->insert(['nro_grupo'=>$cantidad_grupo]);
-        $id_grupo=Grupo_Control_Alimento::create(['nro_grupo'=>$cantidad_grupo]);
       
 
         $edad_min=$request->get('edad_min');
@@ -57,7 +54,19 @@ $alimento=DB::select('select tipo , id from alimento where deleted_at IS NULL an
         $temp_min=$request->get('temp_min');        
         $temp_max=$request->get('temp_max');
         $id_alimento=$request->get('id_alimento');
+        
         $cantidad=$request->get('cantidad');
+        for ($i=0; $i < count($cantidad); $i++) { 
+          if ($cantidad[$i]=="") {
+            return redirect('/crear_control')->with('message-error','Por favor llene todos los datos correspondientes'); 
+            
+          }
+        }
+try {
+    DB::beginTransaction();
+$contar_grupo=DB::select('SELECT max(nro_grupo) as maximo FROM `grupo_control_alimento` where deleted_at IS NULL');
+        $cantidad_grupo=$contar_grupo[0]->maximo+1;
+        $id_grupo=Grupo_Control_Alimento::create(['nro_grupo'=>  $cantidad_grupo,'estado'=>1]);
 
         for ($i=0; $i <count($edad_min) ; $i++) { 
           // $edad=DB::table('grupo_edad')->insert(['edad_min'=>$edad_min[$i],'edad_max'=>$edad_min[$i],'id_alimento'=>$id_alimento[$i],'id_grupo_control'=>$id_grupo['id']]);
@@ -86,10 +95,17 @@ $alimento=DB::select('select tipo , id from alimento where deleted_at IS NULL an
 $recorrer_cantidad++;
           }
         }
+            DB::commit();
+               Session::flash('message', 'Control de Alimento Agregado con Éxito');
+                  return Redirect::to('/controlalimento');
+  
+  } catch (Exception $e) {
+    DB::rollback();
+  }  
         
         
           
-   return redirect('/controlalimento')->with('message','Control de Alimento Agregado con Éxito'); 
+   
 
     }
 
@@ -310,5 +326,49 @@ $id_grupo_control=$request->get('id_grupo_control');
      else{
        return redirect('/controlalimento')->with('message-error','Ya existe ese rango de Temperatura'); 
      }
+}
+
+public function ReplicarControl($id){
+  try {
+    DB::beginTransaction();
+    $recorrer_cantidad=0;
+$contar_grupo=DB::select('SELECT max(nro_grupo) as maximo FROM `grupo_control_alimento` where deleted_at IS NULL');
+        $cantidad_grupo=$contar_grupo[0]->maximo+1;
+        $id_grupo=Grupo_Control_Alimento::create(['nro_grupo'=>  $cantidad_grupo]);
+$grupo_edad=DB::select('SELECT grupo_edad.edad_min, grupo_edad.edad_max,alimento.id  from grupo_control_alimento,grupo_edad,grupo_edad_temp,grupo_temperatura,alimento where grupo_control_alimento.id=grupo_edad_temp.id_control and grupo_edad.id=grupo_edad_temp.id_edad and grupo_edad_temp.id_temp=grupo_temperatura.id and grupo_edad.id_alimento=alimento.id and grupo_control_alimento.id='.$id.' GROUP by edad_min');
+$grupo_temp=DB::select('SELECT grupo_temperatura.temp_min,grupo_temperatura.temp_max from grupo_control_alimento,grupo_edad,grupo_edad_temp,grupo_temperatura,alimento where grupo_control_alimento.id=grupo_edad_temp.id_control and grupo_edad.id=grupo_edad_temp.id_edad and grupo_edad_temp.id_temp=grupo_temperatura.id and grupo_edad.id_alimento=alimento.id and grupo_control_alimento.id='.$id.' GROUP by grupo_temperatura.temp_min');
+
+
+$cantidad=DB::select('SELECT grupo_edad.edad_min,grupo_edad.edad_max, grupo_temperatura.temp_min,grupo_temperatura.temp_max,cantidad from grupo_control_alimento,grupo_edad,grupo_edad_temp,grupo_temperatura,alimento where grupo_control_alimento.id=grupo_edad_temp.id_control and grupo_edad.id=grupo_edad_temp.id_edad and grupo_edad_temp.id_temp=grupo_temperatura.id and grupo_edad.id_alimento=alimento.id and grupo_control_alimento.id='.$id.' GROUP by grupo_temperatura.temp_min,grupo_edad.edad_min');
+        for ($i=0; $i <count($grupo_edad) ; $i++) { 
+          // $edad=DB::table('grupo_edad')->insert(['edad_min'=>$edad_min[$i],'edad_max'=>$edad_min[$i],'id_alimento'=>$id_alimento[$i],'id_grupo_control'=>$id_grupo['id']]);
+          $edad[$i]=GrupoEdad::create([
+            'edad_min'=>$grupo_edad[$i]->edad_min,
+            'edad_max'=>$grupo_edad[$i]->edad_max,
+            'estado'=>1,
+            'id_alimento'=>$grupo_edad[$i]->id, ]);
+           }
+         
+      for ($j=0; $j <  count($grupo_temp); $j++) { 
+          $temperatura[$j]=GrupoTemperatura::create([
+            'temp_min'=> $grupo_temp[$j]->temp_min,
+            'temp_max'=> $grupo_temp[$j]->temp_max,
+            'estado'=> 1,
+            ]);
+
+        }
+         for ($i=0; $i <count($edad) ; $i++) { 
+          for ($j=0; $j <count($temperatura) ; $j++) { 
+              DB::table('grupo_edad_temp')->insert(['id_edad' => $edad[$i]->id, 'id_temp' => $temperatura[$j]->id,'cantidad' => $cantidad[$recorrer_cantidad]->cantidad,'id_control'=>$id_grupo['id'],'estado'=>1]);
+
+$recorrer_cantidad++;
+          }
+        }
+            DB::commit();
+           return response()->json(['mensaje'=>'1']);
+  
+  } catch (Exception $e) {
+    DB::rollback();
+  }  
 }
 }

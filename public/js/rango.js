@@ -14,7 +14,7 @@ function crear_rango_edad() {
     var edad_max = $("#edad_max").val();
     var id_alimento = $("#id_alimento").val();
 
-    if (parseInt(edad_max) > parseInt(edad_min)) {
+    if (parseInt(edad_max) > parseInt(edad_min) && id_alimento != 0) {
         var token = $('#token').val();
         $.ajax({
             url: "rango_edad",
@@ -46,7 +46,7 @@ function crear_rango_edad() {
     } else {
         $('#btnregistrar').show();
         $('#loading').css("display", "none");
-        alertify.alert("ERROR", "LA EDAD MAXIMA TIENE QUE SER MAYOR A LA EDAD MINIMA");
+        alertify.alert("ERROR", "LA EDAD MAXIMA TIENE QUE SER MAYOR A LA EDAD MINIMA, TIENE QUE SELECCIONAR UN TIPO DE ALIMENTO");
     }
 }
 
