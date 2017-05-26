@@ -185,19 +185,26 @@ function mostrarcriamuertas() {
     });
 }
 
-function cargar_modal(id_control,galpon,id_fase_galpon,cantidad,cantidad_granel){
-    var control = id_control;  
-    if (control==0) {
+function cargar_modal(id_control,id_alimento, galpon, id_fase_galpon, cantidad, cantidad_granel){
+   
+     $('#loading').css("display", "block");
+ $('#div_cantidad_anterior').css('display','none');
+    $("#cantidad_granel").val("");
+    $("#cantidad").val("");
+    var id_alimento = id_alimento;
+    if (id_alimento == 0) {
         $("select[name=id_silo]").empty();
-        $("select[name=id_silo]").addClass("form-control"); 
+        $("select[name=id_silo]").addClass("form-control");
         $("select[name=id_silo]").append("<option value='0'></option>");
+    $('#loading').css("display", "none");
+
         $("#btn_aceptar").hide();
     } 
     else {
         $("select[name=id_silo]").empty();
         $("select[name=id_silo]").addClass("form-control");   
         var control = $('#id_control'+galpon).text(); 
-        $.get("lista_de_silos/"+control, function (response) {
+        $.get("lista_de_silos/"+id_alimento, function (response) {
             if (response.length==0) {
                 $("#espacio_2").css({'background':'#F5A9A9'});
                 $("#btn_aceptar").hide();
@@ -205,7 +212,8 @@ function cargar_modal(id_control,galpon,id_fase_galpon,cantidad,cantidad_granel)
             } else {
                 $("#espacio_2").css({'background':'#A9F5F2'});
                 for (var i = 0; i < response.length; i++) {
-                    $("select[name=id_silo]").append("<option value='" + response[i].id_silo + "'>" + response[i].nombre + " → " + response[i].tipo +"</option>");
+                    $("select[name=id_silo]").append("<option value='" + response[i].id_silo + "'>" + response[i].nombre + " → " + response[i].tipo + "</option>");
+                 
                     $("#tipo").val(response[i].tipo);
                 }
                 $("#titulo").text("ALIMENTAR FASE "+galpon);
@@ -217,6 +225,8 @@ function cargar_modal(id_control,galpon,id_fase_galpon,cantidad,cantidad_granel)
                 $("#id_control").val($('#id_control'+galpon).text());
                 $("#cantidad_granel").val($('#c_granel_g'+galpon).text());
                 $("#cantidad").val($('#cantidad_g'+galpon).text());
+                $('#loading').css("display", "none");
+                
             }
         }); 
     }
@@ -288,47 +298,46 @@ function actualizar_control_alimento_cria(){
 
 
 
-
-
-function alimentar(){
+function alimentar() {
     $('#btn_aceptar').hide();
-    $('#loading').css("display","block");
-    var id_control_alimento = $("#id_control").val();
+    $('#loading').css("display", "block");
+    var id_control_alimento = $("#id_control_alimento").val();
     var id_fase_galpon = $("#id_fase_galpon").val();
+   var id_tipo_alimento=$('#id_tipo_alimento').val();
     var cantidad = $("#cantidad").val();
     var id_silo = $("#id_silo").val();
-    var token = $("#token").val(); 
+    var token = $("#token").val();
     $.ajax({
-        url: "consumo",
-        headers: {'X-CSRF-TOKEN': token},
-        type: 'POST',
+        url: "consumostore",
+        //headers: {'X-CSRF-TOKEN': token},
+        type: 'GET',
         dataType: 'json',
-        data: {cantidad: cantidad, id_silo: id_silo, id_fase_galpon:id_fase_galpon, id_control_alimento:id_control_alimento},
-         success: function (response) {
-            if (response.mensaje!== undefined) {
-                $('#mensaje').modal('show'); 
-                $('#titulo_mensaje').text(response.mensaje); 
-            }else{
-                if (response.mensaje1!== undefined) {
-                 alertify.alert("ADVERTENCIA",response.mensaje1); 
-                }
-                else{
+        data: {id_alimento:id_tipo_alimento,cantidad: cantidad, id_silo: id_silo, id_fase_galpon: id_fase_galpon, id_control_alimento: id_control_alimento},
+        success: function (response) {
+            if (response.mensaje !== undefined) {
+                $('#mensaje').modal('show');
+                $('#titulo_mensaje').text(response.mensaje);
+            } else {
+                if (response.mensaje1 !== undefined) {
+                    alertify.alert("ADVERTENCIA", response.mensaje1);
+                } else {
                     alertify.success("GUARDADO CORECCTAMENTE");
-                    location.reload(); 
+                    //miPopup.document.location.reload();
+                    location.reload();
                 }
             }
-           // miPopup.document.location.reload();
-            $('#myModal').modal('hide');
-            $('#loading').css("display","none");
+           
+            $('#loading').css("display", "none");
             $('#btn_aceptar').show();
         },
         error: function () {
-            $('#loading').css("display","none");
-            alertify.alert("EROR","NO SE PUDO GUARDAR LOS DATOS NUEVAMENTE"); 
+            $('#loading').css("display", "none");
+            alertify.alert("EROR", "NO SE PUDO GUARDAR LOS DATOS INTENTE NUEVAMENTE");
             $('#btn_aceptar').show();
         },
-    });    
+    });
 }
+
 
 function actualizar(){
     location.reload();
@@ -491,4 +500,27 @@ function ConsElimiVacunaPostergada(opcion,idControVacuna,idVacunaPostergada){
        });   
     }
      
+}
+function dartodo(){//esta funcion devuelve toda la cantidad actual que el silo entrante tiene el boton esta en modal de consumo
+
+    id_silo=$('#id_silo').val();
+  
+
+    $.get('dartodo/'+id_silo,function(res){
+          $('#div_cantidad_anterior').css('display','block');
+           $('#cantidad_anterior').val($('#cantidad').val());
+        $('#cantidad').val(res[0].cantidad);
+        
+    });
+}
+
+function CambiarAlimento(){//esta funcion genera todos los alimento en el select ubicado en el modal de consumo alimento
+    id_silo=$('#id_silo').val();
+
+$.get('CambiarAlimento/'+id_silo,function(res){
+    for (var i = 0; i < res.length; i++) {
+$('#id_silo').append('<option value='+res[i].id+'>'+res[i].nombre+' → '+ res[i].tipo);
+    
+    }
+});
 }

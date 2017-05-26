@@ -80,10 +80,11 @@ function extraer_id(id_galpon, input) {
     input_celda = input;
 }
 
-$(document).keypress(function (e) {
-    if (e.which == 13) {
+// $(document).keypress(function (e) {
+//     if (e.which == 13) {
+    function guardar_huevo(){
         if (valor == "0") {
-            if (id != 0) {
+            if (id != "") {
                 valor = "1";
                 if (!isNaN(parseInt($("#id_fase_galpon" + id).val()))) {
                     $('#loading').css("display", "block");
@@ -132,7 +133,7 @@ $(document).keypress(function (e) {
 
                     $.ajax({
                         url: "galponi",
-                        headers: {'X-CSRF-TOKEN': token},
+                       // headers: {'X-CSRF-TOKEN': token},
                         type: 'GET',
                         dataType: 'json',
                         data: {celda1: celda1, celda2: celda2, celda3: celda3, celda4: celda4, id_fases_galpon: id_fase_galpon, cantidad_total: total_huevo, postura_p: postura_huevo, cantidad_muertas: gallina_muerta_diaria},
@@ -142,14 +143,14 @@ $(document).keypress(function (e) {
                                 var route = "actualizar_fases/" + id_fase_galpon;
                                 $.ajax({
                                     url: route,
-                                    headers: {'X-CSRF-TOKEN': token},
+                                   // headers: {'X-CSRF-TOKEN': token},
                                     type: 'GET',
                                     dataType: 'json',
                                     data: {cantidad_actual: gallinas_actual, total_muerta: total_muerta},
                                     success: function () {
                                         $('#cant_actual' + id).text(gallinas_actual);
                                         $('#muerta' + id).text(total_muerta);
-                                        alertify.success("GUARDADO CORECCTAMENTE"); //DESDE ACA ES LO DE LAS POSTURA
+                                        alertify.success("GUARDADO CORRECTAMENTE"); //DESDE ACA ES LO DE LAS POSTURA
                                         $('#gmd' + id).text(gallina_muerta_diaria);
                                         $("#total_galpones" + id).text(total_huevo);
                                         $("#ph" + id).text(postura_huevo + " %");
@@ -194,7 +195,8 @@ $(document).keypress(function (e) {
             }
         }
     }
-});
+//     }
+// });
 
 function obtener_temp() {
     var token = $("#token").val();
@@ -316,21 +318,23 @@ function mostrarceldas() {
     });
 }
 
-function cargar_modal(id_control, galpon, id_fase_galpon, cantidad, cantidad_granel) {
+function cargar_modal(id_control,id_alimento, galpon, id_fase_galpon, cantidad, cantidad_granel) {//este carga el modal de alimento
     $('#loading').css("display", "block");
-
+ $('#div_cantidad_anterior').css('display','none');
     $("#cantidad_granel").val("");
     $("#cantidad").val("");
-    var control = id_control;
-    if (control == 0) {
+    var id_alimento = id_alimento;
+    if (id_alimento == 0) {
         $("select[name=id_silo]").empty();
         $("select[name=id_silo]").addClass("form-control");
         $("select[name=id_silo]").append("<option value='0'></option>");
+    $('#loading').css("display", "none");
+
         $("#btn_aceptar").hide();
     } else {
         $("select[name=id_silo]").empty();
         $("select[name=id_silo]").addClass("form-control");
-        $.get("lista_de_silos/" + control, function (response) {
+        $.get("lista_de_silos/" + id_alimento, function (response) {
             if (response.length == 0) {
                 $("#espacio_2").css({'background': '#F5A9A9'});
                 $("#btn_aceptar").hide();
@@ -347,6 +351,10 @@ function cargar_modal(id_control, galpon, id_fase_galpon, cantidad, cantidad_gra
                 $("#cantidad_actual_g").val($("#cant_actual" + galpon).text());
                 $("#cantidad").val(cantidad);
                 $("#id_fase_galpon").val(id_fase_galpon);
+                $("#id_control_alimento").val(id_control);
+                $("#id_tipo_alimento").val(id_alimento);
+
+                // $("#id_alimento_cons").val()
                 id = 0;
                 $("#id_control").val($('#id_control' + galpon).text());
                 $("#cantidad_granel").val($('#c_granel_g' + galpon).text());
@@ -382,17 +390,18 @@ function calcular_alimento() {
 function alimentar() {
     $('#btn_aceptar').hide();
     $('#loading').css("display", "block");
-    var id_control_alimento = $("#id_control").val();
+    var id_control_alimento = $("#id_control_alimento").val();
     var id_fase_galpon = $("#id_fase_galpon").val();
+   var id_tipo_alimento=$('#id_tipo_alimento').val();
     var cantidad = $("#cantidad").val();
     var id_silo = $("#id_silo").val();
     var token = $("#token").val();
     $.ajax({
-        url: "consumo",
-        headers: {'X-CSRF-TOKEN': token},
-        type: 'POST',
+        url: "consumostore",
+        //headers: {'X-CSRF-TOKEN': token},
+        type: 'GET',
         dataType: 'json',
-        data: {cantidad: cantidad, id_silo: id_silo, id_fase_galpon: id_fase_galpon, id_control_alimento: id_control_alimento},
+        data: {id_alimento:id_tipo_alimento,cantidad: cantidad, id_silo: id_silo, id_fase_galpon: id_fase_galpon, id_control_alimento: id_control_alimento},
         success: function (response) {
             if (response.mensaje !== undefined) {
                 $('#mensaje').modal('show');
@@ -406,7 +415,7 @@ function alimentar() {
                     location.reload();
                 }
             }
-            $('#myModal').modal('hide');
+           
             $('#loading').css("display", "none");
             $('#btn_aceptar').show();
         },
@@ -577,4 +586,28 @@ function ConsElimiVacunaPostergada(opcion,idControVacuna,idVacunaPostergada){
        });   
     }
      
+}
+
+function dartodo(){//esta funcion devuelve toda la cantidad actual que el silo entrante tiene el boton esta en modal de consumo
+
+    id_silo=$('#id_silo').val();
+  
+
+    $.get('dartodo/'+id_silo,function(res){
+          $('#div_cantidad_anterior').css('display','block');
+           $('#cantidad_anterior').val($('#cantidad').val());
+        $('#cantidad').val(res[0].cantidad);
+        
+    });
+}
+
+function CambiarAlimento(){//esta funcion genera todos los alimento en el select ubicado en el modal de consumo alimento
+    id_silo=$('#id_silo').val();
+
+$.get('CambiarAlimento/'+id_silo,function(res){
+    for (var i = 0; i < res.length; i++) {
+$('#id_silo').append('<option value='+res[i].id+'>'+res[i].nombre+' → '+ res[i].tipo);
+    
+    }
+});
 }

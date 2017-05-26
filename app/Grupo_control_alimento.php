@@ -32,7 +32,7 @@ use Authenticatable, Authorizable, CanResetPassword, SoftDeletes;
      *
      * @var array
      */
-    protected $fillable = ['nro_grupo'];
+    protected $fillable = ['nro_grupo','estado'];
     protected $dates=['deleted_at'];
     /**
      * The attributes excluded from the model's JSON form.

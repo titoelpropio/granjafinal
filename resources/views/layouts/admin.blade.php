@@ -46,8 +46,12 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
               <ul class="nav navbar-nav">
-                <li><a href="{!!URL::to('galpon')!!}">Ponedora</a></li>
-                <li><a href="{!!URL::to('criarecria')!!}">Crias</a></li>
+                <li   
+                @if(Auth::user()!=null) style="width: 8%;"
+                @endif  
+
+                ><a href="{!!URL::to('galpon')!!}">Ponedora</a></li>
+                <li  @if(Auth::user()!=null) style=" width: 4%;"     @endif ><a href="{!!URL::to('criarecria')!!}">Crias</a></li>
 
                  @if(Auth::user()==null) 
                   <li><a href="{!!URL::to('cajadeposito')!!}">Cajas</a></li>
@@ -56,7 +60,7 @@
                   <li><a href="{!!URL::to('cajadeposito_admin')!!}">Cajas</a></li>
                 @endif    
 
-                <li class="dropdown">
+                <li class="dropdown" @if(Auth::user()!=null) style="width: 8%;"  @endif    style="width: 13%;" > 
                   <a class="dropdown-toggle" data-toggle="dropdown" href="">Ventas<span class="caret"></span></a>
                   <ul class="dropdown-menu">
                       <li><a href="{!!URL::to('ventacaja')!!}">Venta Caja</a></li>
@@ -73,8 +77,8 @@
                
 
                 <li><a href="{!!URL::to('controlalimento')!!}">Control Alimento</a></li>                    
-                <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="">Galpones<span class="caret"></span></a>
+                <li class="dropdown"    style="width: 10%;"   >
+                  <a class="dropdown-toggle" data-toggle="dropdown" href=""  >Galpones<span class="caret"></span></a>
                   <ul class="dropdown-menu">
                     <li><a href="{!!URL::to('fases')!!}"> FASES</a></li>
                     <li><a href="{!!URL::to('vistagalpon')!!}"> GALPON</a></li>
@@ -84,7 +88,7 @@
                     <li><a href="{!!URL::to('consumo_alimento')!!}">CONSUMO ALIMENTO</a></li>    
                   </ul>
                 </li>
-      <li class="dropdown">
+      <li class="dropdown" @if(Auth::user()!=null) style="width: 6%;" @endif>
                   <a class="dropdown-toggle" data-toggle="dropdown" href="">Silo<span class="caret"></span></a>
                   <ul class="dropdown-menu">
                  <li><a href="{!!URL::to('silo')!!}"> Silo</a></li>
@@ -94,7 +98,7 @@
                        
                   </ul>
                 </li>
-                <li class="dropdown">
+                <li class="dropdown" style="width: 11%;">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="">Caja-Huevo<span class="caret"></span></a>
                   <ul class="dropdown-menu">
                       <li><a href="{!!URL::to('maple')!!}"> MAPLE</a></li>
@@ -107,7 +111,7 @@
 
               
 
-                <li class="dropdown">
+                <li class="dropdown" style="width: 9%;">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="">Reporte<span class="caret"></span></a>
                   <ul class="dropdown-menu">
                       <li><a href="{!!URL::to('reporteponedoras')!!}">REPORTE DE POSTURA HUEVO</a></li>                                
@@ -115,10 +119,12 @@
                       <li><a href="{!!URL::to('reportehuevo')!!}">R. VENTA DE HUEVOS DESCARTE</a></li>                                
                       <li><a href="{!!URL::to('reporte_compra')!!}">R.E COMPRA DE ALIMENTOS</a></li>
                       <li><a href="{!!URL::to('lista_gallinas')!!}">R. DE GALLINAS</a></li>     
-                      <li><a href="{!!URL::to('reportebalance')!!}">R. GENERAL</a></li>     
+                      <li><a href="{!!URL::to('reportebalance')!!}">R. GENERAL</a></li> 
+                      <li><a href="{!!URL::to('reporte_produccion')!!}">R. Grafico</a></li>     
+
                   </ul>
                 </li>
-            <li class="dropdown">
+            <li class="dropdown" style="width: 12%;">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="">Administrador<span class="caret"></span></a>
                   <ul class="dropdown-menu">                              
                       <li><a href="{!!URL::to('lista_compra')!!}">ANULAR COMPRA ALIMENTO</a></li>   

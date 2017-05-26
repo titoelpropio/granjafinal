@@ -12,25 +12,24 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Consumo extends  Model implements AuthenticatableContract,
+class ControlAlimentoGalpon extends  Model implements AuthenticatableContract,
                                     AuthorizableContract,
                                     CanResetPasswordContract
 {
- use Authenticatable, Authorizable, CanResetPassword;
- use SoftDeletes;
+ use Authenticatable, Authorizable, CanResetPassword,SoftDeletes;
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'consumo';
+    protected $table = 'control_alimento_galpon';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['id_fase_galpon','cantidad','id_silo','id_alimento'];
+    protected $fillable = ['id_edad','id_control_alimento'];
     protected $dates = ['deleted_at'];
 
 }

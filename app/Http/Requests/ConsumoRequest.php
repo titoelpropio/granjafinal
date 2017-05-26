@@ -25,8 +25,7 @@ class ConsumoRequest extends Request
     {
         return [
            'id_fase_galpon'=>'required',
-           'id_control_alimento'=>'required',
-            'id_silo'=>'required',
+            
             'cantidad'=>'required',
         ];
     }

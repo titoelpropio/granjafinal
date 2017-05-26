@@ -24,8 +24,10 @@ function index() {
   $lista2=array();
   $lista3=array();
   $silo=DB::select("SELECT silo.id,silo.nombre,silo.cantidad,silo.cantidad_minima,silo.estado,alimento.tipo FROM silo,alimento WHERE silo.estado=1 AND alimento.id=silo.id_alimento and silo.deleted_at IS NULL order by silo.numero");
-    $consumo = DB::SELECT("SELECT alimento.tipo, consumo.cantidad, consumo.id,galpon.numero as numero_galpon,fases.numero as numero_fase,fases.nombre,consumo.fecha,silo.id as id_silo,silo.nombre as nombre_silo FROM silo,consumo,fases_galpon,fases,edad,galpon,alimento WHERE consumo.id_fase_galpon=fases_galpon.id and silo.id=consumo.id_silo AND fases_galpon.id_edad=edad.id and edad.id_galpon=galpon.id and fases_galpon.id_fase=fases.id and Date_format(consumo.fecha,'%Y/%M/%d')=Date_format(now(),'%Y/%M/%d') and galpon.numero<=8 AND fases.nombre='PONEDORA' and silo.id_alimento=alimento.id AND consumo.deleted_at IS NULL order by galpon.numero");
-    $consumo2 = DB::SELECT("SELECT alimento.tipo, consumo.cantidad, consumo.id,galpon.numero as numero_galpon,fases.numero as numero_fase,fases.nombre,consumo.fecha,silo.id as id_silo,silo.nombre as nombre_silo FROM silo,consumo,fases_galpon,fases,edad,galpon,alimento WHERE consumo.id_fase_galpon=fases_galpon.id and silo.id=consumo.id_silo AND fases_galpon.id_edad=edad.id and edad.id_galpon=galpon.id and fases_galpon.id_fase=fases.id and Date_format(consumo.fecha,'%Y/%M/%d')=Date_format(now(),'%Y/%M/%d') and galpon.numero>8 AND fases.nombre='PONEDORA' and silo.id_alimento=alimento.id AND consumo.deleted_at IS NULL  order by galpon.numero");
+    $consumo = DB::SELECT("SELECT consumo.cantidad, consumo.id,galpon.numero as numero_galpon,fases.numero as numero_fase,fases.nombre,consumo.fecha,alimento.tipo from galpon,edad,fases,fases_galpon,consumo,alimento WHERE consumo.id_alimento=alimento.id and 
+galpon.id=edad.id_galpon AND edad.id=fases_galpon.id_edad AND fases.id=fases_galpon.id_fase AND consumo.id_fase_galpon=fases_galpon.id ANd  Date_format(consumo.fecha,'%Y/%M/%d')=Date_format(now(),'%Y/%M/%d') and galpon.numero<=8 AND consumo.deleted_at IS NULL and fases.nombre='PONEDORA' order by galpon.numero");
+    $consumo2 = DB::SELECT("SELECT consumo.cantidad, consumo.id,galpon.numero as numero_galpon,fases.numero as numero_fase,fases.nombre,consumo.fecha,alimento.tipo from galpon,edad,fases,fases_galpon,consumo,alimento WHERE consumo.id_alimento=alimento.id and 
+galpon.id=edad.id_galpon AND edad.id=fases_galpon.id_edad AND fases.id=fases_galpon.id_fase AND consumo.id_fase_galpon=fases_galpon.id ANd  Date_format(consumo.fecha,'%Y/%M/%d')=Date_format(now(),'%Y/%M/%d') and galpon.numero>8 AND consumo.deleted_at IS NULL and fases.nombre='PONEDORA' order by galpon.numero");
     $galpon=DB::select("SELECT galpon.id as id_galpon,edad.id as id_edad,fases_galpon.id as id_fase_galpon,galpon.numero,galpon.capacidad_total,DATEDIFF(now(),edad.fecha_inicio)AS edad,fases_galpon.cantidad_inicial,fases_galpon.cantidad_actual,fases.nombre,fases_galpon.total_muerta from edad,fases_galpon,galpon,fases WHERE edad.id_galpon=galpon.id and edad.id=fases_galpon.id_edad and fases.id=fases_galpon.id_fase and fases.nombre='PONEDORA' and edad.estado=1 and galpon.numero<=8 order by numero ");
     $postura_huevo=DB::select("SELECT postura_huevo.id as id_postura_huevo,celda1,celda2,celda3,celda4,postura_huevo.postura_p,postura_huevo.cantidad_total,galpon.id as id_galpon,galpon.numero,edad.id as id_edad,fases_galpon.total_muerta ,postura_huevo.cantidad_muertas  from postura_huevo,galpon,edad,fases_galpon,fases WHERE edad.id_galpon=galpon.id and fases_galpon.id_edad=edad.id and postura_huevo.id_fases_galpon=fases_galpon.id and edad.estado=1 and fases_galpon.id_fase=fases.id AND fases.nombre='PONEDORA' AND Date_format(postura_huevo.fecha,'%Y/%M/%d')=Date_format(now(),'%Y/%M/%d') and galpon.numero<=8 order by numero");   
     $galpon_general=DB::select("SELECT galpon.id as id_galpon,edad.id as id_edad,fases_galpon.id as id_fase_galpon,galpon.numero,galpon.capacidad_total,DATEDIFF(now(),edad.fecha_inicio)AS edad,fases_galpon.cantidad_inicial,fases_galpon.cantidad_actual,fases.nombre,fases_galpon.total_muerta from edad,fases_galpon,galpon,fases WHERE edad.id_galpon=galpon.id and edad.id=fases_galpon.id_edad and fases.id=fases_galpon.id_fase and fases.nombre='PONEDORA' and edad.estado=1 order by numero ");
@@ -182,7 +184,8 @@ public function update_galpon(Request $request) {
     if($request->ajax()){
       DB::table('galpon')->insert([
         'numero' => $request->numero,
-        'capacidad_total' => $request->capacidad_total]);          
+        'capacidad_total' => $request->capacidad_total
+      ]);    
         return response()->json($request->all());
         }
     }
@@ -267,8 +270,10 @@ and control_alimento.id_alimento=alimento.id and control_alimento.deleted_at IS 
       return response()->json($lista2);
     } 
 
-    public function lista_de_silos($id_control){
-        $silo=DB::select("SELECT control_alimento.id as id_control,alimento.id as id_alimento, alimento.tipo, silo.id as id_silo, silo.nombre, silo.cantidad from control_alimento,alimento,silo WHERE control_alimento.id_alimento=alimento.id AND silo.id_alimento=alimento.id AND control_alimento.id='".$id_control."' and silo.estado=1 AND alimento.estado=1 AND silo.deleted_at IS NULL AND alimento.deleted_at IS NULL");
+    public function lista_de_silos($id_alimento){
+
+        $silo=DB::select('select silo.id as id_silo, alimento.id as id_alimento,alimento.tipo,silo.nombre  from alimento,silo where alimento.id=silo.id_alimento and alimento.id='.$id_alimento);
+        // $silo=DB::select("SELECT control_alimento.id as id_control,alimento.id as id_alimento, alimento.tipo, silo.id as id_silo, silo.nombre, silo.cantidad from control_alimento,alimento,silo WHERE control_alimento.id_alimento=alimento.id AND silo.id_alimento=alimento.id AND control_alimento.id='".$id_control."' and silo.estado=1 AND alimento.estado=1 AND silo.deleted_at IS NULL AND alimento.deleted_at IS NULL");
         return response()->json($silo);
     }
 
@@ -303,6 +308,14 @@ and control_alimento.id_alimento=alimento.id and control_alimento.deleted_at IS 
         $gallinas_descartadas=DB::select("SELECT edad.id as id_edad,edad.fecha_inicio,galpon.numero,fases.nombre,edad.fecha_descarte,fases_galpon.cantidad_inicial,fases_galpon.cantidad_actual,fases_galpon.total_muerta,SUM(postura_huevo.cantidad_total)as cantidad_total from edad,galpon,fases_galpon,fases,postura_huevo WHERE edad.id_galpon=galpon.id AND fases_galpon.id_edad=edad.id AND fases_galpon.id_fase=fases.id AND postura_huevo.id_fases_galpon=fases_galpon.id AND fases.nombre='PONEDORA' AND edad.fecha_descarte IS NOT NULL AND fases_galpon.fecha_fin IS NOT NULL GROUP BY edad.id ORDER BY edad.fecha_inicio DESC");
 
         return view("edad.lista_gallinas",compact('gallinas_fases','gallinas_ponedoras','gallinas_descartadas','gallinas_fases_descartadas'));
+    }
+    public function dartodo($id){//esta funcion devuelve toda la cantidad actual que el silo entrante tiene el boton esta en modal de consumo
+        $result=DB::select('select cantidad from silo where id='.$id);
+        return response()->json($result);
+    }
+    public function CambiarAlimento($id_silo){
+        $result=DB::select('select silo.id,silo.nombre,alimento.tipo from silo,alimento where silo.id_alimento=alimento.id and silo.id<>'.$id_silo);
+        return response()->json($result);
     }
 
 }

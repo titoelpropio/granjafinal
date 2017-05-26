@@ -22,9 +22,10 @@ public function consumo_alimento() {
   }
 
   public function lista_conusmo_alimento($fecha_inicio, $fecha_fin) {
-        $consumo = DB::SELECT("SELECT consumo.cantidad, consumo.id,galpon.numero as numero_galpon,fases.numero as numero_fase,fases.nombre,consumo.fecha,alimento.tipo from galpon,edad,fases,fases_galpon,consumo,control_alimento,alimento WHERE
-galpon.id=edad.id_galpon AND edad.id=fases_galpon.id_edad AND fases.id=fases_galpon.id_fase AND consumo.id_fase_galpon=fases_galpon.id AND consumo.id_control_alimento=control_alimento.id AND
- control_alimento.id_alimento=alimento.id AND Date_format(consumo.fecha,'%Y/%m/%d') BETWEEN Date_format('".$fecha_inicio."','%Y/%m/%d') and Date_format('".$fecha_fin."','%Y/%m/%d') and consumo.deleted_at IS NULL order by galpon.numero,consumo.fecha");
+        $consumo = DB::SELECT("SELECT consumo.cantidad, consumo.id,galpon.numero as numero_galpon,fases.numero as numero_fase,fases.nombre,consumo.fecha,alimento.tipo from galpon,edad,fases,fases_galpon,consumo,alimento 
+WHERE
+consumo.id_alimento=alimento.id and 
+galpon.id=edad.id_galpon AND edad.id=fases_galpon.id_edad AND fases.id=fases_galpon.id_fase AND consumo.id_fase_galpon=fases_galpon.id  ANd  Date_format(consumo.fecha,'%Y/%m/%d') BETWEEN Date_format('".$fecha_inicio."','%Y/%m/%d') and Date_format('".$fecha_fin."','%Y/%m/%d') and consumo.deleted_at IS NULL order by galpon.numero,consumo.fecha");
         return response()->json($consumo); 
   }
 
@@ -37,7 +38,14 @@ galpon.id=edad.id_galpon AND edad.id=fases_galpon.id_edad AND fases.id=fases_gal
         if ($request->ajax()) {
             $verificar = DB::select("select count(*)as count from  silo where  id=" . $request->id_silo . " and silo.cantidad<" . $request->cantidad);
             if ($verificar[0]->count == 0) {
-                $consumo = Consumo::create($request->all());
+              $id_alimento=DB::select('select alimento.id AS id_alimento,silo.nombre,alimento.tipo from silo,alimento where silo.id_alimento=alimento.id and silo.id='.$request->id_silo);
+                $consumo = Consumo::create([
+                    'id_fase_galpon'=>$request->id_fase_galpon,
+                    'cantidad'=>$request->cantidad,
+                    'id_silo'=>$request->id_silo,
+                    'id_alimento'=> $id_alimento[0]->id_alimento,
+
+                  ]);
 
                 $cantidad = DB::select("select COUNT(*)as count,silo.cantidad from silo where silo.id=" . $result['id'] . " and cantidad_minima>=" . $result['cantidad']); //para controlar la cantidad minima del silo actual
                 if ($cantidad[0]->count != 0) {

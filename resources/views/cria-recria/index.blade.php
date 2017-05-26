@@ -14,7 +14,8 @@ $total_consumo=count($consumo);
 $contador_v=0;
 $auxdias=0;
 $dias=0;
-
+  $id_control=0;
+  $id_alimento=0;
 $control_1 = array();
 $con_control = 0;
 $cantidad = 0;
@@ -63,36 +64,38 @@ $cantidad = 0;
                
 
                 @foreach($cria_recria as $gal) <?php 
-     $control=DB::select("SELECT control_alimento.id as id_control ,cantidad,tipo FROM control_alimento,rango_edad,rango_temperatura,alimento WHERE control_alimento.id_temperatura=rango_temperatura.id and  control_alimento.id_edad= rango_edad.id 
-    and control_alimento.id_alimento=alimento.id and control_alimento.deleted_at IS NULL and rango_edad.edad_min<=".$gal->edad." and rango_edad.edad_max>=".$gal->edad." and rango_temperatura.temp_min<=".$temperatura[0]->temperatura."  and rango_temperatura.temp_max>=".$temperatura[0]->temperatura); 
+ $control = DB::select("select grupo_control_alimento.id as id_control,alimento.id as id_alimento, grupo_edad_temp.cantidad,alimento.tipo from alimento, edad,grupo_control_alimento,control_alimento_galpon,grupo_edad,grupo_temperatura,grupo_edad_temp where edad.id=control_alimento_galpon.id_edad and control_alimento_galpon.id_control_alimento=grupo_control_alimento.id and grupo_control_alimento.id=grupo_edad_temp.id_control and grupo_edad_temp.id_edad=grupo_edad.id and grupo_edad_temp.id_temp=grupo_temperatura.id and edad.id=".$gal->id_edad." and alimento.id=grupo_edad.id_alimento and grupo_edad.edad_min<=".$gal->edad." and grupo_edad.edad_max>=".$gal->edad." and grupo_temperatura.temp_min<=".$temperatura[0]->temperatura." and grupo_temperatura.temp_max>=".$temperatura[0]->temperatura);
                 
 
                 for ($i=$x; $i <=$gal->numero_fase;  $i++) { 
-if (count($control)!=0) {
-                  $cantidad=$control[0]->cantidad*$gal->cantidad_actual;
-                     $alimento=$control[0]->tipo;
-                 $id=$control[0]->id_control;
-                 $cantidad_granel=$control[0]->cantidad;
-                }
-                else{
-                  $id=0;
-                  $cantidad=0;
-                  $cantidad_granel=0;
-                  $alimento="";
+ if (count($control) != 0) {//verifica que exista un control alimento para esaa edad y temperatura
+                    $cantidad = $control[0]->cantidad * $gal->cantidad_actual;
+                    $id_control= $control[0]->id_control;
+                      $cantidad  =number_format(  $cantidad,2,".","");  
+                    $alimento = $control[0]->tipo;
+                    $id_alimento=$control[0]->id_alimento;
+                    $cantidad_granel = $control[0]->cantidad;
+                    echo $id_control;
+                } else {//caso contrario todo se coloca en 0
+                    $cantidad = 0;
+                    $cantidad_granel = 0;
+                    $alimento = "";
+                    $id = 0;
                 }
                     if ($i!=$gal->numero_fase) { echo " <td colspan=1 align='center' class=xl83 style='border-left:none; width:10.75%'></td>"; } 
                     else{ 
 
                       if (count($consumo)==0) {
-                        echo "<td colspan=1 align='center' class=xl83 style='border-left:none; width:10.75%'><button class='btn btn-success' data-toggle='modal' data-target='#myModal' onclick=cargar_modal(".$id.",".$gal->numero_fase.",".$gal->id_fase_galpon.",".$cantidad.",".$cantidad_granel.")><span data-status=1 id=id_alimento".$gal->numero_fase.">". $alimento."</span>: <span id=cantidad_g".$gal->numero_fase.">".$cantidad."</span> <span hidden id=c_granel_g".$gal->numero_fase.">". $cantidad_granel."</span> <span hidden id=id_control".$gal->numero_fase.">".$id."</span> kg. </button></td> ";
+                        echo "<td colspan=1 align='center' class=xl83 style='border-left:none; width:10.75%'><button class='btn btn-success' data-toggle='modal' data-target='#myModal' 
+  onclick=cargar_modal(". $id_control.",".$id_alimento."," . $gal->numero_fase . "," . $gal->id_fase_galpon . "," . $cantidad . "," . $cantidad_granel . ")><span data-status=1 id=id_alimento".$gal->numero_fase.">". $alimento."</span>: <span id=cantidad_g".$gal->numero_fase.">".$cantidad."</span> <span hidden id=c_granel_g".$gal->numero_fase.">". $cantidad_granel."</span> <span hidden id=id_control".$gal->numero_fase.">".$id."</span> kg. </button></td> ";
                       } else {
                       if ($consumo[$contador_consumo]->numero_fase==$gal->numero_fase) {
-                          echo "<td colspan=1 align='center' class=xl83 style='border-left:none; width:10.75%'><button disabled class='btn btn-danger' data-toggle='modal' data-target='#myModal' onclick=cargar_modal(".$id.",".$gal->numero_fase.",".$gal->id_fase_galpon.",".$cantidad.",".$cantidad_granel.")><span data-status=0 id=id_alimento".$gal->numero_fase.">".$consumo[$contador_consumo]->tipo.":</span> <span id=cantidad_g".$gal->numero_fase.">".$consumo[$contador_consumo]->cantidad."</span> <span hidden id=c_granel_g".$gal->numero_fase.">". $cantidad_granel."</span> <span hidden id=id_control".$gal->numero_fase.">".$id."</span> kg. </button></td> ";
+                          echo "<td colspan=1 align='center' class=xl83 style='border-left:none; width:10.75%'><button disabled class='btn btn-danger' data-toggle='modal' data-target='#myModal'  onclick=cargar_modal(". $id_control.",".$id_alimento."," . $gal->numero_fase . "," . $gal->id_fase_galpon . "," . $cantidad . "," . $cantidad_granel . ")><span data-status=0 id=id_alimento".$gal->numero_fase.">".$consumo[$contador_consumo]->tipo.":</span> <span id=cantidad_g".$gal->numero_fase.">".$consumo[$contador_consumo]->cantidad."</span> <span hidden id=c_granel_g".$gal->numero_fase.">". $cantidad_granel."</span> <span hidden id=id_control".$gal->numero_fase.">".$id."</span> kg. </button></td> ";
                             if ($total_consumo-1>$contador_consumo) {
                                 $contador_consumo++;                             
                             } 
                         } else {
-                          echo "<td colspan=1 align='center' class=xl83 style='border-left:none; width:10.75%'><button class='btn btn-success' data-toggle='modal' data-target='#myModal' onclick=cargar_modal(".$id.",".$gal->numero_fase.",".$gal->id_fase_galpon.",".$cantidad.",".$cantidad_granel.")><span data-status=1 id=id_alimento".$gal->numero_fase.">". $alimento."</span>: <span id=cantidad_g".$gal->numero_fase.">".$cantidad."</span> <span hidden id=c_granel_g".$gal->numero_fase.">". $cantidad_granel."</span> <span hidden id=id_control".$gal->numero_fase.">".$id."</span> kg. </button></td> ";
+                          echo "<td colspan=1 align='center' class=xl83 style='border-left:none; width:10.75%'><button class='btn btn-success' data-toggle='modal' data-target='#myModal' onclick=cargar_modal(". $id_control.",".$id_alimento."," . $gal->numero_fase . "," . $gal->id_fase_galpon . "," . $cantidad . "," . $cantidad_granel . ")><span data-status=1 id=id_alimento".$gal->numero_fase.">". $alimento."</span>: <span id=cantidad_g".$gal->numero_fase.">".$cantidad."</span> <span hidden id=c_granel_g".$gal->numero_fase.">". $cantidad_granel."</span> <span hidden id=id_control".$gal->numero_fase.">".$id."</span> kg. </button></td> ";
                         }
                       }
                   }

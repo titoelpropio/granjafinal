@@ -10,6 +10,7 @@
         <div class="table-responsive">	
             <div class="pull-left"><H1>EDAD</H1></div>
             <div class="pull-right"><button class='btn btn-success' data-toggle='modal' data-target='#myModalcreate' onclick="cargarselect()">AGREGAR</button></div> 
+       
 
             <table class="table table-striped table-bordered table-condensed table-hover">
                 <thead bgcolor=black style="color: white">

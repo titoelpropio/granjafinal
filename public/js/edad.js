@@ -90,11 +90,13 @@ var token = $('#token').val();
 var id_fase = $("#id_fase").val();
 var fecha_inicio = $("#fecha_inicio").val();
 var id_galpon = $("#id_galpon").val();   
+var id_control_alimento = $("#id_control_alimento").val();   
+
 var estado = 1; 
 var cantidad_inicial = $("#cantidad_inicial").val();
 var cantidad_actual = $("#cantidad_actual").val();
 var total_muerta = $("#total_muerta").val();
-if (fecha_inicio=="" || cantidad_inicial=="" || cantidad_actual=="") {
+if (fecha_inicio=="" || cantidad_inicial=="" || cantidad_actual=="" || id_control_alimento==0 ) {
     alertify.alert("ERROR","INTRODUSCA LOS DATOS REQUERIDOS");
     $('#btnregistrar').show(); 
 } else {
@@ -104,11 +106,11 @@ if (fecha_inicio=="" || cantidad_inicial=="" || cantidad_actual=="") {
     } else {
         $('#loading').css("display","block"); 
         $.ajax({
-            url: "edad",
-            headers: {'X-CSRF-TOKEN': token},
-            type: 'POST',
+            url: "edadstrore",
+           // headers: {'X-CSRF-TOKEN': token},
+            type: 'GET',
             dataType: 'json',
-            data: {fecha_inicio: fecha_inicio, estado: estado, id_galpon: id_galpon,id_fase: id_fase, cantidad_inicial: cantidad_inicial, cantidad_actual:cantidad_actual, total_muerta:total_muerta},
+            data: {fecha_inicio: fecha_inicio, estado: estado, id_galpon: id_galpon,id_control_alimento: id_control_alimento,id_fase: id_fase, cantidad_inicial: cantidad_inicial, cantidad_actual:cantidad_actual, total_muerta:total_muerta},
             success:function(respuesta){
                if (respuesta.mensaje==undefined) {
                     cargartabla(); 
@@ -131,7 +133,6 @@ if (fecha_inicio=="" || cantidad_inicial=="" || cantidad_actual=="") {
             error:function(){
                 $('#loading').css("display","none"); 
                 alertify.alert("ERROR","NO SE PUDO GUARDAR LOS DATOS INTENTE NUEVAMENTE");
-                setTimeout("location.href='edad'",2000);
             },
         });
     }
@@ -152,6 +153,7 @@ function Cargar(id_galpon,id_edad,id_fase,id_fase_galpon) {
     });
     cargarselect_fases(id_fase);
     cargarselect2(id_galpon);
+    cargarselectcontrol(id_edad);
 }
 
 function CargarTraspaso(id_galpon,id_edad,id_fase,id_fase_galpon,numero_fase) {
@@ -243,16 +245,17 @@ function actualizaredad() {
     var cantidad_actual = $("#cantidad_actuals").val();
     var cantidad_inicial = $("#cantidad_inicials").val();
     var total_muerta = $("#total_muertas").val();    
+    var cargarselectcontrol=$('#cargarselectcontrol').val();
  alertify.confirm("MENSAJE","DESEA MODIFICAR LOS DATOS",
   function(){
     $('#loading').css("display","block"); 
-    var route = "edad/"+id_edad; 
+    var route = "edadupdate/"+id_edad; 
     $.ajax({
         url: route,
-        headers: {'X-CSRF-TOKEN': token},
-        type: 'PUT',
+        //headers: {'X-CSRF-TOKEN': token},
+        type: 'GET',
         dataType: 'json',
-        data: {fecha_inicio: fecha_inicio, estado: estado, id_galpon: id_galpon, id_fase:id_fase, id_edad:id_edad ,cantidad_inicial: cantidad_inicial, cantidad_actual: cantidad_actual, total_muerta:total_muerta,id_fase_galpon:id_fase_galpon},
+        data: {cargarselectcontrol:cargarselectcontrol,fecha_inicio: fecha_inicio, estado: estado, id_galpon: id_galpon, id_fase:id_fase, id_edad:id_edad ,cantidad_inicial: cantidad_inicial, cantidad_actual: cantidad_actual, total_muerta:total_muerta,id_fase_galpon:id_fase_galpon},
         success:function(respuesta){
            if (respuesta.mensaje==undefined) {
                 cargartabla();
@@ -407,4 +410,14 @@ function aumentar_gallinas() {
         },
     }); 
   }
+}
+
+
+function cargarselectcontrol(id){
+    $('#cargarselectcontrol').empty();
+    $.get('cargarselectcontrol/'+id,function(res){
+        for (var i = 0; i < res.length; i++) {
+        $('#cargarselectcontrol').append('<option value='+res[i].id+'>'+res[i].nro_grupo);
+        }
+    });
 }
