@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.5.2
--- https://www.phpmyadmin.net/
+-- version 4.4.14
+-- http://www.phpmyadmin.net
 --
--- Servidor: localhost
--- Tiempo de generación: 21-05-2017 a las 18:02:23
--- Versión del servidor: 10.1.21-MariaDB
--- Versión de PHP: 5.6.30
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 26-05-2017 a las 19:39:50
+-- Versión del servidor: 5.6.27-log
+-- Versión de PHP: 5.6.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -26,14 +26,14 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `alimento`
 --
 
-CREATE TABLE `alimento` (
+CREATE TABLE IF NOT EXISTS `alimento` (
   `id` int(11) NOT NULL,
   `nombre` varchar(25) NOT NULL,
   `tipo` varchar(15) DEFAULT NULL,
   `tipo_gallina` tinyint(4) NOT NULL,
   `estado` tinyint(4) NOT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `alimento`
@@ -53,7 +53,7 @@ INSERT INTO `alimento` (`id`, `nombre`, `tipo`, `tipo_gallina`, `estado`, `delet
 -- Estructura de tabla para la tabla `caja`
 --
 
-CREATE TABLE `caja` (
+CREATE TABLE IF NOT EXISTS `caja` (
   `id` int(11) NOT NULL,
   `cantidad_caja` int(11) DEFAULT NULL,
   `cantidad_maple` int(11) DEFAULT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE `caja` (
   `id_tipo_caja` int(11) DEFAULT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=373 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `caja`
@@ -438,13 +438,15 @@ INSERT INTO `caja` (`id`, `cantidad_caja`, `cantidad_maple`, `cantidad_huevo`, `
 (368, 12, 120, 3600, 2, '2017-04-11 19:14:42', NULL),
 (369, 10, 120, 3600, 3, '2017-04-11 19:14:55', NULL),
 (370, 8, 96, 2880, 4, '2017-04-11 19:15:11', NULL),
-(371, 3, 36, 1080, 5, '2017-04-11 19:15:25', NULL);
+(371, 3, 36, 1080, 5, '2017-04-11 19:15:25', NULL),
+(372, 5, 50, 1500, 2, '2017-05-23 23:06:03', NULL);
 
 --
 -- Disparadores `caja`
 --
 DELIMITER $$
-CREATE TRIGGER `actualizar_caja_deposito` AFTER UPDATE ON `caja` FOR EACH ROW BEGIN
+CREATE TRIGGER `actualizar_caja_deposito` AFTER UPDATE ON `caja`
+ FOR EACH ROW BEGIN
 DECLARE cajas integer;
 DECLARE maples integer;
 DECLARE huevos integer;
@@ -461,7 +463,8 @@ END
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `registrar_caja_deposito` AFTER INSERT ON `caja` FOR EACH ROW BEGIN
+CREATE TRIGGER `registrar_caja_deposito` AFTER INSERT ON `caja`
+ FOR EACH ROW BEGIN
 
 IF EXISTS(SELECT * from caja_deposito WHERE id_tipo_caja=NEW.id_tipo_caja )THEN 
        UPDATE caja_deposito SET caja_deposito.cantidad_caja = caja_deposito.cantidad_caja + NEW.cantidad_caja
@@ -484,13 +487,13 @@ DELIMITER ;
 -- Estructura de tabla para la tabla `caja_deposito`
 --
 
-CREATE TABLE `caja_deposito` (
+CREATE TABLE IF NOT EXISTS `caja_deposito` (
   `id` int(11) NOT NULL,
   `cantidad_caja` int(11) DEFAULT NULL,
   `cantidad_maple` int(11) NOT NULL,
   `id_tipo_caja` int(11) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `caja_deposito`
@@ -498,7 +501,7 @@ CREATE TABLE `caja_deposito` (
 
 INSERT INTO `caja_deposito` (`id`, `cantidad_caja`, `cantidad_maple`, `id_tipo_caja`, `deleted_at`) VALUES
 (1, 6, 60, 1, NULL),
-(2, 24, 240, 2, NULL),
+(2, 29, 290, 2, NULL),
 (3, 20, 240, 3, NULL),
 (4, 19, 228, 4, NULL),
 (5, 8, 96, 5, NULL),
@@ -510,7 +513,7 @@ INSERT INTO `caja_deposito` (`id`, `cantidad_caja`, `cantidad_maple`, `id_tipo_c
 -- Estructura de tabla para la tabla `cantidad_maple`
 --
 
-CREATE TABLE `cantidad_maple` (
+CREATE TABLE IF NOT EXISTS `cantidad_maple` (
   `id` int(11) NOT NULL,
   `cantidad_maple` int(11) DEFAULT NULL,
   `id_tipo_caja` int(11) DEFAULT NULL,
@@ -523,12 +526,12 @@ CREATE TABLE `cantidad_maple` (
 -- Estructura de tabla para la tabla `categoria`
 --
 
-CREATE TABLE `categoria` (
+CREATE TABLE IF NOT EXISTS `categoria` (
   `id` int(11) NOT NULL,
   `nombre` varchar(50) DEFAULT NULL,
   `tipo` tinyint(4) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `categoria`
@@ -548,45 +551,20 @@ INSERT INTO `categoria` (`id`, `nombre`, `tipo`, `deleted_at`) VALUES
 -- Estructura de tabla para la tabla `compra`
 --
 
-CREATE TABLE `compra` (
+CREATE TABLE IF NOT EXISTS `compra` (
   `id` int(11) NOT NULL,
   `precio_compra` decimal(10,2) DEFAULT NULL,
   `cantidad_total` decimal(10,2) DEFAULT NULL,
   `fecha` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `id_silo` int(11) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `compra`
 --
 
 INSERT INTO `compra` (`id`, `precio_compra`, `cantidad_total`, `fecha`, `id_silo`, `deleted_at`) VALUES
-(1, '2.70', '6000.00', '2017-02-09 18:16:06', 3, NULL),
-(2, '12750.00', '6000.00', '2017-02-09 18:27:56', 6, NULL),
-(3, '4340.00', '2000.00', '2017-02-11 19:10:04', 4, NULL),
-(4, '4340.00', '2000.00', '2017-02-11 19:10:38', 2, NULL),
-(5, '4310.00', '2000.00', '2017-02-11 19:11:02', 5, NULL),
-(6, '12750.00', '5966.00', '2017-02-15 23:11:41', 3, NULL),
-(7, '72.25', '34.00', '2017-02-15 23:13:06', 3, NULL),
-(8, '8680.00', '4000.00', '2017-02-17 17:54:52', 4, NULL),
-(9, '4310.00', '2000.00', '2017-02-17 17:56:01', 5, NULL),
-(10, '513.21', '236.50', '2017-02-17 17:59:55', 4, NULL),
-(11, '127744.90', '5865.00', '2017-02-23 12:10:27', 3, '2017-02-23'),
-(12, '12750.00', '6000.00', '2017-02-23 19:19:57', 3, NULL),
-(13, '8620.00', '4042.00', '2017-02-23 22:31:15', 5, NULL),
-(14, '4340.00', '2000.00', '2017-02-23 22:34:15', 2, NULL),
-(15, '8620.00', '4000.00', '2017-03-01 22:28:31', 5, NULL),
-(16, '4340.00', '2000.00', '2017-03-01 22:29:04', 4, NULL),
-(17, '12930.00', '6000.00', '2017-03-03 16:07:06', 5, NULL),
-(18, '30.00', '400.00', '2017-03-07 01:34:33', 1, NULL),
-(19, '8620.00', '4000.00', '2017-03-08 19:41:40', 5, NULL),
-(20, '12930.00', '6000.00', '2017-03-11 18:17:46', 5, NULL),
-(21, '3935.00', '2000.00', '2017-03-15 12:38:02', 3, NULL),
-(22, '4340.00', '2000.00', '2017-03-15 13:35:14', 4, NULL),
-(23, '8620.00', '4000.00', '2017-03-15 13:36:22', 5, NULL),
-(24, '12930.00', '6000.00', '2017-03-18 17:56:42', 5, NULL),
-(25, '12930.00', '6000.00', '2017-03-22 17:58:31', 5, NULL),
 (26, '3935.00', '2000.00', '2017-03-25 18:04:25', 3, NULL),
 (27, '4340.00', '2000.00', '2017-03-25 18:09:11', 4, NULL),
 (28, '4310.00', '2000.00', '2017-03-25 18:14:25', 5, NULL),
@@ -599,19 +577,23 @@ INSERT INTO `compra` (`id`, `precio_compra`, `cantidad_total`, `fecha`, `id_silo
 (35, '3935.00', '2000.00', '2017-04-06 16:08:00', 3, NULL),
 (36, '12930.00', '6000.00', '2017-04-08 18:05:23', 5, NULL),
 (37, '12930.00', '6000.00', '2017-04-12 13:38:17', 5, NULL),
-(38, '0.00', '4801.40', '2017-05-18 18:33:06', 3, NULL);
+(38, '0.00', '4801.40', '2017-05-18 18:33:06', 3, NULL),
+(39, '0.00', '5731.80', '2017-05-24 00:23:17', 4, NULL),
+(40, '0.00', '6000.00', '2017-05-26 17:27:39', 2, NULL);
 
 --
 -- Disparadores `compra`
 --
 DELIMITER $$
-CREATE TRIGGER `actualizar_silo_compra` AFTER INSERT ON `compra` FOR EACH ROW UPDATE silo 
+CREATE TRIGGER `actualizar_silo_compra` AFTER INSERT ON `compra`
+ FOR EACH ROW UPDATE silo 
 SET silo.cantidad=silo.cantidad+(NEW.cantidad_total) 
 WHERE silo.id=new.id_silo
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `anular_compra` AFTER UPDATE ON `compra` FOR EACH ROW BEGIN 
+CREATE TRIGGER `anular_compra` AFTER UPDATE ON `compra`
+ FOR EACH ROW BEGIN 
 	UPDATE silo SET silo.cantidad=silo.cantidad - NEW.cantidad_total
     WHERE silo.id=NEW.id_silo;
 END
@@ -624,20 +606,67 @@ DELIMITER ;
 -- Estructura de tabla para la tabla `consumo`
 --
 
-CREATE TABLE `consumo` (
+CREATE TABLE IF NOT EXISTS `consumo` (
   `id` int(11) NOT NULL,
   `cantidad` decimal(10,2) DEFAULT NULL,
   `fecha` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `id_silo` int(11) NOT NULL,
+  `id_alimento` int(11) NOT NULL,
   `id_fase_galpon` int(11) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `consumo`
+--
+
+INSERT INTO `consumo` (`id`, `cantidad`, `fecha`, `id_silo`, `id_alimento`, `id_fase_galpon`, `deleted_at`) VALUES
+(8, '30.58', '2017-05-22 23:20:55', 1, 1, 26, NULL),
+(11, '296.00', '2017-05-23 02:18:27', 5, 5, 29, NULL),
+(12, '1160.00', '2017-05-23 02:32:12', 2, 2, 32, NULL),
+(17, '310.00', '2017-05-23 02:38:55', 1, 1, 33, NULL),
+(18, '533.00', '2017-05-23 02:45:14', 1, 1, 34, NULL),
+(19, '270.00', '2017-07-24 03:18:05', 5, 5, 34, NULL),
+(20, '500.00', '2017-07-24 03:18:13', 4, 4, 33, NULL),
+(21, '296.00', '2017-07-24 03:18:28', 5, 5, 29, NULL),
+(22, '150.00', '2017-05-23 13:22:42', 5, 5, 29, '2017-05-23'),
+(23, '270.66', '2017-05-23 13:24:20', 7, 1, 26, '2017-05-24'),
+(24, '1160.00', '2017-05-23 13:24:44', 2, 2, 32, '2017-05-23'),
+(25, '433.00', '2017-05-23 13:26:35', 1, 1, 34, '2017-05-23'),
+(26, '400.00', '2017-05-23 13:26:43', 1, 1, 33, '2017-05-23'),
+(27, '433.00', '2017-05-23 15:09:10', 1, 1, 34, '2017-05-23'),
+(28, '433.00', '2017-05-23 15:10:03', 1, 1, 34, '2017-05-23'),
+(29, '296.00', '2017-05-23 17:30:47', 5, 5, 29, '2017-05-23'),
+(30, '296.00', '2017-05-23 17:37:33', 5, 5, 29, '2017-05-23'),
+(31, '296.00', '2017-05-23 17:39:22', 5, 5, 29, '2017-05-23'),
+(32, '296.00', '2017-05-23 17:39:45', 5, 5, 29, '2017-05-23'),
+(33, '296.00', '2017-05-23 17:39:58', 5, 5, 29, '2017-05-23'),
+(34, '296.00', '2017-05-23 17:43:48', 5, 5, 29, '2017-05-23'),
+(35, '196.00', '2017-05-23 17:44:36', 5, 5, 29, '2017-05-23'),
+(36, '296.00', '2017-05-23 17:59:15', 5, 5, 29, '2017-05-24'),
+(37, '309.88', '2017-05-24 00:24:59', 1, 1, 33, '2017-05-24'),
+(38, '402.30', '2017-05-24 00:30:30', 2, 2, 32, NULL),
+(39, '103.90', '2017-05-24 00:31:23', 1, 1, 34, '2017-05-24'),
+(40, '295.56', '2017-05-24 00:32:23', 5, 5, 29, NULL),
+(41, '270.66', '2017-05-24 00:32:29', 1, 1, 26, NULL),
+(42, '287.50', '2017-05-24 02:16:34', 4, 4, 36, '2017-05-24'),
+(43, '20.00', '2017-05-24 02:17:33', 1, 1, 35, NULL);
 
 --
 -- Disparadores `consumo`
 --
 DELIMITER $$
-CREATE TRIGGER `actualizar_consumo_grano` AFTER UPDATE ON `consumo` FOR EACH ROW BEGIN
+CREATE TRIGGER `Al_eliminar` BEFORE UPDATE ON `consumo`
+ FOR EACH ROW IF new.deleted_at<>"" THEN
+update silo
+set silo.cantidad=silo.cantidad+old.cantidad
+where silo.id = old.id_silo;
+END IF
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `actualizar_consumo_grano` AFTER UPDATE ON `consumo`
+ FOR EACH ROW BEGIN
     DECLARE cantidad_grano integer;
     SET cantidad_grano =  NEW.cantidad - OLD.cantidad;
     UPDATE silo SET silo.cantidad = silo.cantidad - cantidad_grano
@@ -646,7 +675,8 @@ END
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `descontar_granos` AFTER INSERT ON `consumo` FOR EACH ROW UPDATE silo 
+CREATE TRIGGER `descontar_granos` AFTER INSERT ON `consumo`
+ FOR EACH ROW UPDATE silo 
 SET silo.cantidad=silo.cantidad-(NEW.cantidad) 
 WHERE silo.id=new.id_silo
 $$
@@ -658,7 +688,7 @@ DELIMITER ;
 -- Estructura de tabla para la tabla `consumo_emergente`
 --
 
-CREATE TABLE `consumo_emergente` (
+CREATE TABLE IF NOT EXISTS `consumo_emergente` (
   `id` int(11) NOT NULL,
   `id_edad` int(11) DEFAULT NULL,
   `id_vacuna` int(11) DEFAULT NULL,
@@ -675,7 +705,7 @@ CREATE TABLE `consumo_emergente` (
 -- Estructura de tabla para la tabla `consumo_vacuna`
 --
 
-CREATE TABLE `consumo_vacuna` (
+CREATE TABLE IF NOT EXISTS `consumo_vacuna` (
   `id` int(11) NOT NULL,
   `cantidad` int(11) DEFAULT NULL,
   `precio` int(11) DEFAULT NULL,
@@ -683,7 +713,16 @@ CREATE TABLE `consumo_vacuna` (
   `id_control_vacuna` int(11) DEFAULT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `consumo_vacuna`
+--
+
+INSERT INTO `consumo_vacuna` (`id`, `cantidad`, `precio`, `estado`, `id_control_vacuna`, `fecha`, `deleted_at`) VALUES
+(1, 1, 0, 1, 42, '2017-05-23 01:36:27', NULL),
+(2, 1, 0, 1, 42, '2017-05-23 01:36:31', NULL),
+(3, 1, 0, 1, 43, '2017-05-23 13:21:11', NULL);
 
 -- --------------------------------------------------------
 
@@ -691,13 +730,49 @@ CREATE TABLE `consumo_vacuna` (
 -- Estructura de tabla para la tabla `control_alimento_galpon`
 --
 
-CREATE TABLE `control_alimento_galpon` (
+CREATE TABLE IF NOT EXISTS `control_alimento_galpon` (
   `id` int(11) NOT NULL,
   `id_edad` int(11) DEFAULT NULL,
   `id_control_alimento` int(11) DEFAULT NULL,
   `fecha` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `control_alimento_galpon`
+--
+
+INSERT INTO `control_alimento_galpon` (`id`, `id_edad`, `id_control_alimento`, `fecha`, `deleted_at`) VALUES
+(8, 21, 39, '2017-05-21 21:24:54', NULL),
+(9, 22, 38, '2017-05-21 21:25:42', NULL),
+(10, 23, 45, '2017-05-21 22:05:36', NULL),
+(11, 24, 60, '2017-05-22 15:04:04', NULL),
+(12, 25, 62, '2017-05-22 19:30:58', NULL),
+(13, 26, 55, '2017-05-22 23:39:22', NULL),
+(14, 27, 44, '2017-05-23 01:25:23', NULL),
+(15, 28, 38, '2017-05-23 01:46:02', NULL),
+(16, 29, 40, '2017-05-23 02:10:13', NULL),
+(17, 30, 62, '2017-05-23 02:17:09', NULL),
+(18, 31, 39, '2017-05-23 03:28:21', NULL),
+(19, 32, 60, '2017-05-24 02:32:36', NULL);
+
+--
+-- Disparadores `control_alimento_galpon`
+--
+DELIMITER $$
+CREATE TRIGGER `Modificar_control` BEFORE UPDATE ON `control_alimento_galpon`
+ FOR EACH ROW update grupo_control_alimento
+set estado=1
+where id=old.id_control_alimento
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `actualizar_control` BEFORE INSERT ON `control_alimento_galpon`
+ FOR EACH ROW update grupo_control_alimento
+set estado=0
+where grupo_control_alimento.id=new.id_control_alimento
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -705,13 +780,13 @@ CREATE TABLE `control_alimento_galpon` (
 -- Estructura de tabla para la tabla `control_vacuna`
 --
 
-CREATE TABLE `control_vacuna` (
+CREATE TABLE IF NOT EXISTS `control_vacuna` (
   `id` int(11) NOT NULL,
   `id_edad` int(11) DEFAULT NULL,
   `id_vacuna` int(11) DEFAULT NULL,
   `estado` tinyint(4) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `control_vacuna`
@@ -757,7 +832,87 @@ INSERT INTO `control_vacuna` (`id`, `id_edad`, `id_vacuna`, `estado`, `deleted_a
 (37, 5, 38, 1, NULL),
 (38, 5, 39, 1, NULL),
 (39, 5, 40, 1, NULL),
-(40, 5, 41, 1, NULL);
+(40, 5, 41, 1, NULL),
+(41, 23, 2, 1, NULL),
+(42, 23, 3, 1, NULL),
+(43, 23, 4, 1, NULL),
+(44, 23, 5, 1, NULL),
+(45, 23, 6, 1, NULL),
+(46, 23, 7, 1, NULL),
+(47, 23, 39, 1, NULL),
+(48, 23, 8, 1, NULL),
+(49, 23, 9, 1, NULL),
+(50, 23, 10, 1, NULL),
+(51, 23, 11, 1, NULL),
+(52, 23, 12, 1, NULL),
+(53, 23, 13, 1, NULL),
+(54, 23, 15, 1, NULL),
+(55, 23, 14, 1, NULL),
+(56, 23, 16, 1, NULL),
+(57, 23, 17, 1, NULL),
+(58, 23, 18, 1, NULL),
+(59, 23, 19, 1, NULL),
+(60, 23, 20, 1, NULL),
+(61, 23, 40, 1, NULL),
+(62, 23, 21, 1, NULL),
+(63, 23, 22, 1, NULL),
+(64, 23, 23, 1, NULL),
+(65, 23, 24, 1, NULL),
+(66, 23, 25, 1, NULL),
+(67, 23, 26, 1, NULL),
+(68, 23, 27, 1, NULL),
+(69, 23, 41, 1, NULL),
+(70, 23, 28, 1, NULL),
+(71, 23, 29, 1, NULL),
+(72, 23, 30, 1, NULL),
+(73, 23, 31, 1, NULL),
+(74, 23, 32, 1, NULL),
+(75, 23, 33, 1, NULL),
+(76, 23, 34, 1, NULL),
+(77, 23, 35, 1, NULL),
+(78, 23, 36, 1, NULL),
+(79, 23, 37, 1, NULL),
+(80, 23, 38, 1, NULL),
+(81, 30, 2, 1, NULL),
+(82, 30, 3, 1, NULL),
+(83, 30, 4, 1, NULL),
+(84, 30, 5, 1, NULL),
+(85, 30, 6, 1, NULL),
+(86, 30, 7, 1, NULL),
+(87, 30, 39, 1, NULL),
+(88, 30, 8, 1, NULL),
+(89, 30, 9, 1, NULL),
+(90, 30, 10, 1, NULL),
+(91, 30, 11, 1, NULL),
+(92, 30, 12, 1, NULL),
+(93, 30, 13, 1, NULL),
+(94, 30, 15, 1, NULL),
+(95, 30, 14, 1, NULL),
+(96, 30, 16, 1, NULL),
+(97, 30, 17, 1, NULL),
+(98, 30, 18, 1, NULL),
+(99, 30, 19, 1, NULL),
+(100, 30, 20, 1, NULL),
+(101, 30, 40, 1, NULL),
+(102, 30, 21, 1, NULL),
+(103, 30, 22, 1, NULL),
+(104, 30, 23, 1, NULL),
+(105, 30, 24, 1, NULL),
+(106, 30, 25, 1, NULL),
+(107, 30, 26, 1, NULL),
+(108, 30, 27, 1, NULL),
+(109, 30, 41, 1, NULL),
+(110, 30, 28, 1, NULL),
+(111, 30, 29, 1, NULL),
+(112, 30, 30, 1, NULL),
+(113, 30, 31, 1, NULL),
+(114, 30, 32, 1, NULL),
+(115, 30, 33, 1, NULL),
+(116, 30, 34, 1, NULL),
+(117, 30, 35, 1, NULL),
+(118, 30, 36, 1, NULL),
+(119, 30, 37, 1, NULL),
+(120, 30, 38, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -765,14 +920,14 @@ INSERT INTO `control_vacuna` (`id`, `id_edad`, `id_vacuna`, `estado`, `deleted_a
 -- Estructura de tabla para la tabla `detalle_venta`
 --
 
-CREATE TABLE `detalle_venta` (
+CREATE TABLE IF NOT EXISTS `detalle_venta` (
   `id` int(11) NOT NULL,
   `id_tipo_caja` int(11) DEFAULT NULL,
   `id_venta_caja` int(11) DEFAULT NULL,
   `cantidad_caja` int(11) DEFAULT NULL,
   `subtotal_precio` decimal(10,2) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=183 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `detalle_venta`
@@ -966,7 +1121,8 @@ INSERT INTO `detalle_venta` (`id`, `id_tipo_caja`, `id_venta_caja`, `cantidad_ca
 -- Disparadores `detalle_venta`
 --
 DELIMITER $$
-CREATE TRIGGER `actualizar_cajas` AFTER INSERT ON `detalle_venta` FOR EACH ROW BEGIN
+CREATE TRIGGER `actualizar_cajas` AFTER INSERT ON `detalle_venta`
+ FOR EACH ROW BEGIN
     DECLARE cantidad_maples integer;
     SELECT tipo_caja.cantidad_maple INTO cantidad_maples FROM tipo_caja,maple WHERE tipo_caja.id_maple=maple.id and tipo_caja.id=NEW.id_tipo_caja;
 	UPDATE caja_deposito SET caja_deposito.cantidad_caja = caja_deposito.cantidad_caja - NEW.cantidad_caja
@@ -977,7 +1133,8 @@ END
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `anular_venta` AFTER UPDATE ON `detalle_venta` FOR EACH ROW BEGIN
+CREATE TRIGGER `anular_venta` AFTER UPDATE ON `detalle_venta`
+ FOR EACH ROW BEGIN
     DECLARE cantidad_maples integer;
     SELECT tipo_caja.cantidad_maple INTO cantidad_maples FROM tipo_caja,maple WHERE tipo_caja.id_maple=maple.id and tipo_caja.id=NEW.id_tipo_caja;
 	UPDATE caja_deposito SET caja_deposito.cantidad_caja = caja_deposito.cantidad_caja + NEW.cantidad_caja
@@ -994,7 +1151,7 @@ DELIMITER ;
 -- Estructura de tabla para la tabla `detalle_venta_huevo`
 --
 
-CREATE TABLE `detalle_venta_huevo` (
+CREATE TABLE IF NOT EXISTS `detalle_venta_huevo` (
   `id` int(11) NOT NULL,
   `id_venta_huevo` int(11) DEFAULT NULL,
   `id_tipo_huevo` int(11) DEFAULT NULL,
@@ -1002,7 +1159,7 @@ CREATE TABLE `detalle_venta_huevo` (
   `cantidad_huevo` int(11) NOT NULL,
   `subtotal_precio` decimal(10,2) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `detalle_venta_huevo`
@@ -1080,7 +1237,8 @@ INSERT INTO `detalle_venta_huevo` (`id`, `id_venta_huevo`, `id_tipo_huevo`, `can
 -- Disparadores `detalle_venta_huevo`
 --
 DELIMITER $$
-CREATE TRIGGER `actualizar_maples` AFTER INSERT ON `detalle_venta_huevo` FOR EACH ROW BEGIN
+CREATE TRIGGER `actualizar_maples` AFTER INSERT ON `detalle_venta_huevo`
+ FOR EACH ROW BEGIN
 	UPDATE huevo_deposito SET huevo_deposito.cantidad_maple = huevo_deposito.cantidad_maple - NEW.cantidad_maple
     WHERE huevo_deposito.id_tipo_huevo = NEW.id_tipo_huevo;
 	UPDATE huevo_deposito SET huevo_deposito.cantidad_huevo = huevo_deposito.cantidad_huevo - NEW.cantidad_huevo
@@ -1089,7 +1247,8 @@ END
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `anular_venta_huevo` AFTER UPDATE ON `detalle_venta_huevo` FOR EACH ROW BEGIN
+CREATE TRIGGER `anular_venta_huevo` AFTER UPDATE ON `detalle_venta_huevo`
+ FOR EACH ROW BEGIN
 	UPDATE huevo_deposito SET huevo_deposito.cantidad_maple = huevo_deposito.cantidad_maple + NEW.cantidad_maple
     WHERE huevo_deposito.id_tipo_huevo = NEW.id_tipo_huevo;
 	UPDATE huevo_deposito SET huevo_deposito.cantidad_huevo = huevo_deposito.cantidad_huevo + NEW.cantidad_huevo
@@ -1104,30 +1263,49 @@ DELIMITER ;
 -- Estructura de tabla para la tabla `edad`
 --
 
-CREATE TABLE `edad` (
+CREATE TABLE IF NOT EXISTS `edad` (
   `id` int(11) NOT NULL,
   `fecha_inicio` date DEFAULT NULL,
   `fecha_descarte` date DEFAULT NULL,
   `estado` int(11) DEFAULT NULL,
   `id_galpon` int(11) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `edad`
 --
 
 INSERT INTO `edad` (`id`, `fecha_inicio`, `fecha_descarte`, `estado`, `id_galpon`, `deleted_at`) VALUES
-(1, '2015-08-31', NULL, 1, 48, NULL),
-(2, '2016-10-10', NULL, 1, 55, NULL),
-(3, '2015-11-16', NULL, 1, 49, NULL),
-(4, '2016-06-02', NULL, 1, 50, NULL),
-(5, '2016-08-11', NULL, 1, 51, NULL),
-(6, '2016-03-31', NULL, 1, 52, NULL),
-(7, '2016-01-21', NULL, 1, 53, NULL),
-(8, '2015-06-25', NULL, 1, 54, NULL),
-(9, '2016-12-22', NULL, 1, 54, NULL),
-(10, '2017-03-06', NULL, 1, 48, NULL);
+(1, '2015-08-31', '2017-05-21', 0, 48, NULL),
+(2, '2016-10-10', '2017-05-22', 0, 55, NULL),
+(3, '2015-11-16', '2017-05-21', 0, 49, NULL),
+(4, '2016-06-02', '2017-05-21', 0, 49, NULL),
+(5, '2016-08-11', '2017-05-21', 0, 51, NULL),
+(6, '2016-03-31', '2017-05-22', 0, 54, NULL),
+(7, '2016-01-21', '2017-05-21', 0, 53, NULL),
+(8, '2015-06-25', '2017-05-21', 0, 54, NULL),
+(9, '2016-12-22', '2017-05-22', 0, 54, NULL),
+(10, '2017-03-06', '2017-05-21', 0, 48, NULL),
+(14, '2017-05-21', '2017-05-21', 0, 48, NULL),
+(15, '2017-05-21', '2017-05-21', 0, 50, NULL),
+(16, '2017-05-21', '2017-05-22', 0, 48, NULL),
+(17, '2017-05-21', '2017-05-21', 0, 48, NULL),
+(18, '2017-05-21', '2017-05-21', 0, 50, NULL),
+(19, '2017-05-21', '2017-05-22', 0, 49, NULL),
+(20, '2017-05-21', '2017-05-22', 0, 50, NULL),
+(21, '2017-05-21', '2017-05-22', 0, 48, NULL),
+(22, '2017-05-21', '2017-05-22', 0, 51, NULL),
+(23, '2017-05-21', NULL, 1, 53, NULL),
+(24, '2017-05-22', '2017-05-22', 0, 55, NULL),
+(25, '2017-05-22', '2017-05-22', 0, 56, NULL),
+(26, '2016-11-02', NULL, 1, 50, NULL),
+(27, '2017-05-22', NULL, 1, 48, NULL),
+(28, '2017-05-22', NULL, 1, 48, NULL),
+(29, '2017-05-22', '2017-05-23', 0, 56, NULL),
+(30, '2017-05-22', '2017-05-23', 0, 57, NULL),
+(31, '2017-05-22', NULL, 1, 49, NULL),
+(32, '2017-05-01', NULL, 1, 52, NULL);
 
 -- --------------------------------------------------------
 
@@ -1135,14 +1313,14 @@ INSERT INTO `edad` (`id`, `fecha_inicio`, `fecha_descarte`, `estado`, `id_galpon
 -- Estructura de tabla para la tabla `egreso_varios`
 --
 
-CREATE TABLE `egreso_varios` (
+CREATE TABLE IF NOT EXISTS `egreso_varios` (
   `id` int(11) NOT NULL,
   `detalle` varchar(200) DEFAULT NULL,
   `precio` decimal(10,2) DEFAULT NULL,
   `id_categoria` int(11) DEFAULT NULL,
   `fecha` date DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `egreso_varios`
@@ -1150,7 +1328,8 @@ CREATE TABLE `egreso_varios` (
 
 INSERT INTO `egreso_varios` (`id`, `detalle`, `precio`, `id_categoria`, `fecha`, `deleted_at`) VALUES
 (1, 'PAMFILO', '4250.00', 1, '2017-01-01', NULL),
-(2, 'VEHICULO MITSUBISHI', '1800.00', 4, '2017-01-01', NULL);
+(2, 'VEHICULO MITSUBISHI', '1800.00', 4, '2017-01-01', NULL),
+(3, 'se pago al SÑDLsd', '5000.00', 1, '2017-05-23', NULL);
 
 -- --------------------------------------------------------
 
@@ -1158,12 +1337,12 @@ INSERT INTO `egreso_varios` (`id`, `detalle`, `precio`, `id_categoria`, `fecha`,
 -- Estructura de tabla para la tabla `fases`
 --
 
-CREATE TABLE `fases` (
+CREATE TABLE IF NOT EXISTS `fases` (
   `id` int(11) NOT NULL,
   `numero` int(11) DEFAULT NULL,
   `nombre` varchar(15) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `fases`
@@ -1181,7 +1360,7 @@ INSERT INTO `fases` (`id`, `numero`, `nombre`, `deleted_at`) VALUES
 -- Estructura de tabla para la tabla `fases_galpon`
 --
 
-CREATE TABLE `fases_galpon` (
+CREATE TABLE IF NOT EXISTS `fases_galpon` (
   `id` int(11) NOT NULL,
   `id_edad` int(11) DEFAULT NULL,
   `id_fase` int(11) DEFAULT NULL,
@@ -1191,26 +1370,47 @@ CREATE TABLE `fases_galpon` (
   `fecha_inicio` date DEFAULT NULL,
   `fecha_fin` date DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `fases_galpon`
 --
 
 INSERT INTO `fases_galpon` (`id`, `id_edad`, `id_fase`, `cantidad_inicial`, `cantidad_actual`, `total_muerta`, `fecha_inicio`, `fecha_fin`, `deleted_at`) VALUES
-(1, 1, 4, 2055, 1888, 166, '2015-08-31', NULL, NULL),
+(1, 1, 4, 2055, 1888, 166, '2015-08-31', '2017-05-21', NULL),
 (2, 2, 3, 2030, 2028, 2, '2016-10-10', '2017-02-07', NULL),
-(3, 3, 4, 2024, 1820, 187, '2015-11-16', NULL, NULL),
-(4, 4, 4, 2038, 1948, 252, '2016-06-02', NULL, NULL),
-(5, 5, 4, 2020, 1904, 196, '2016-08-11', NULL, NULL),
-(6, 6, 4, 2062, 1891, 177, '2016-03-31', NULL, NULL),
-(7, 7, 4, 2060, 1888, 168, '2016-01-21', NULL, NULL),
-(8, 8, 4, 2394, 2186, 582, '2015-06-25', NULL, NULL),
+(3, 3, 4, 2024, 1820, 187, '2015-11-16', '2017-05-21', NULL),
+(4, 4, 4, 2038, 1948, 252, '2016-06-02', '2017-05-21', NULL),
+(5, 5, 4, 2020, 1904, 196, '2016-08-11', '2017-05-21', NULL),
+(6, 6, 4, 2062, 1891, 177, '2016-03-31', '2017-05-22', NULL),
+(7, 7, 4, 2060, 1888, 168, '2016-01-21', '2017-05-21', NULL),
+(8, 8, 4, 2394, 2186, 582, '2015-06-25', '2017-05-21', NULL),
 (9, 9, 2, 2350, 2298, 52, '2016-12-22', '2017-03-06', NULL),
-(10, 2, 4, 2028, 2087, 90, '2016-10-10', NULL, NULL),
-(11, 9, 3, 2333, 2314, 19, '2017-03-06', NULL, NULL),
+(10, 2, 4, 2028, 2087, 90, '2016-10-10', '2017-05-22', NULL),
+(11, 9, 3, 2333, 2317, 20, '2016-12-22', '2017-05-22', NULL),
 (12, 10, 1, 2060, 2050, 10, '2017-03-06', '2017-04-10', NULL),
-(13, 10, 2, 2064, 2062, 2, '2017-04-10', NULL, NULL);
+(13, 10, 2, 2064, 2062, 2, '2017-04-10', '2017-05-21', NULL),
+(17, 14, 4, 10, 10, 0, '2017-05-21', '2017-05-21', NULL),
+(18, 15, 4, 10, 10, 0, '2017-05-21', '2017-05-21', NULL),
+(19, 16, 1, 25, 30, 0, '2017-05-21', '2017-05-22', NULL),
+(20, 17, 4, 10, 10, 0, '2017-05-21', '2017-05-21', NULL),
+(21, 18, 4, 10, 10, 0, '2017-05-21', '2017-05-21', NULL),
+(22, 19, 4, 10, 10, 0, '2017-05-21', '2017-05-22', NULL),
+(23, 20, 4, 10, 10, 10, '2017-05-21', '2017-05-22', NULL),
+(24, 21, 4, 5, 13, 0, '2017-05-21', '2017-05-22', NULL),
+(25, 22, 4, 5, 10, 0, '2017-05-21', '2017-05-22', NULL),
+(26, 23, 4, 2000, 1999, 1, '2017-05-21', NULL, NULL),
+(27, 24, 4, 10, 10, 0, '2017-05-22', '2017-05-22', NULL),
+(28, 25, 4, 2000, 2500, 5, '2017-05-22', '2017-05-22', NULL),
+(29, 26, 4, 2000, 1996, 19, '2016-11-02', NULL, NULL),
+(30, 27, 1, 1000, 1000, 0, '2017-05-22', '2017-05-22', NULL),
+(31, 27, 2, 1000, 1000, 0, '2017-05-22', '2017-05-22', NULL),
+(32, 28, 4, 2500, 2497, 3, '2017-05-22', NULL, NULL),
+(33, 29, 4, 2500, 2499, 1, '2017-05-22', '2017-05-23', NULL),
+(34, 30, 4, 2000, 1999, 1, '2017-05-22', '2017-05-23', NULL),
+(35, 27, 3, 1000, 1000, 0, '2017-05-22', NULL, NULL),
+(36, 31, 1, 2500, 2499, 1, '2017-05-22', NULL, NULL),
+(37, 32, 4, 2500, 2500, 0, '2017-05-01', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1218,12 +1418,12 @@ INSERT INTO `fases_galpon` (`id`, `id_edad`, `id_fase`, `cantidad_inicial`, `can
 -- Estructura de tabla para la tabla `galpon`
 --
 
-CREATE TABLE `galpon` (
+CREATE TABLE IF NOT EXISTS `galpon` (
   `id` int(11) NOT NULL,
   `numero` int(11) DEFAULT NULL,
   `capacidad_total` int(11) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `galpon`
@@ -1237,7 +1437,9 @@ INSERT INTO `galpon` (`id`, `numero`, `capacidad_total`, `deleted_at`) VALUES
 (52, 5, 2048, NULL),
 (53, 6, 2036, NULL),
 (54, 7, 2392, NULL),
-(55, 8, 2290, NULL);
+(55, 8, 2290, NULL),
+(56, 9, 2000, NULL),
+(57, 10, 3500, NULL);
 
 -- --------------------------------------------------------
 
@@ -1245,25 +1447,29 @@ INSERT INTO `galpon` (`id`, `numero`, `capacidad_total`, `deleted_at`) VALUES
 -- Estructura de tabla para la tabla `grupo_control_alimento`
 --
 
-CREATE TABLE `grupo_control_alimento` (
+CREATE TABLE IF NOT EXISTS `grupo_control_alimento` (
   `id` int(11) NOT NULL,
   `nro_grupo` int(11) DEFAULT NULL,
   `fecha` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `estado` tinyint(4) NOT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `grupo_control_alimento`
 --
 
-INSERT INTO `grupo_control_alimento` (`id`, `nro_grupo`, `fecha`, `deleted_at`) VALUES
-(38, 1, '2017-05-18 14:13:21', NULL),
-(39, 2, '2017-05-18 18:31:47', NULL),
-(40, 3, '2017-05-18 19:02:01', NULL),
-(44, 4, '2017-05-19 01:07:01', NULL),
-(45, 5, '2017-05-19 14:14:35', NULL),
-(54, 5, '2017-05-19 15:50:23', NULL),
-(55, 6, '2017-05-19 15:57:20', NULL);
+INSERT INTO `grupo_control_alimento` (`id`, `nro_grupo`, `fecha`, `estado`, `deleted_at`) VALUES
+(38, 1, '2017-05-18 14:13:21', 0, NULL),
+(39, 2, '2017-05-18 18:31:47', 0, NULL),
+(40, 3, '2017-05-18 19:02:01', 1, NULL),
+(44, 4, '2017-05-19 01:07:01', 0, NULL),
+(45, 5, '2017-05-19 14:14:35', 0, NULL),
+(54, 5, '2017-05-19 15:50:23', 0, '2017-05-23'),
+(55, 6, '2017-05-19 15:57:20', 0, NULL),
+(60, 7, '2017-05-21 18:45:30', 0, NULL),
+(61, 8, '2017-05-21 18:46:51', 1, '2017-05-23'),
+(62, 9, '2017-05-23 01:28:18', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -1271,21 +1477,21 @@ INSERT INTO `grupo_control_alimento` (`id`, `nro_grupo`, `fecha`, `deleted_at`) 
 -- Estructura de tabla para la tabla `grupo_edad`
 --
 
-CREATE TABLE `grupo_edad` (
+CREATE TABLE IF NOT EXISTS `grupo_edad` (
   `id` int(11) NOT NULL,
   `edad_min` int(11) DEFAULT NULL,
   `edad_max` int(11) DEFAULT NULL,
   `estado` tinyint(4) DEFAULT NULL,
   `id_alimento` int(11) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `grupo_edad`
 --
 
 INSERT INTO `grupo_edad` (`id`, `edad_min`, `edad_max`, `estado`, `id_alimento`, `deleted_at`) VALUES
-(25, 2, 12, 1, 2, NULL),
+(25, 0, 12, 1, 2, NULL),
 (26, 15, 17, 1, 3, NULL),
 (27, 20, 25, 1, 1, NULL),
 (28, 26, 30, 1, 4, NULL),
@@ -1322,7 +1528,29 @@ INSERT INTO `grupo_edad` (`id`, `edad_min`, `edad_max`, `estado`, `id_alimento`,
 (65, 19, 25, 1, 6, NULL),
 (66, 26, 30, 1, 5, NULL),
 (67, 31, 35, 1, 4, NULL),
-(68, 45, 150, 1, 5, NULL);
+(68, 45, 150, 1, 5, NULL),
+(85, 2, 12, 1, 2, NULL),
+(86, 15, 17, 1, 3, NULL),
+(87, 20, 25, 1, 3, NULL),
+(88, 26, 30, 1, 4, NULL),
+(89, 2, 12, 1, 2, NULL),
+(90, 15, 17, 1, 3, NULL),
+(91, 20, 25, 1, 1, NULL),
+(92, 26, 30, 1, 4, NULL),
+(93, 31, 35, 1, 2, NULL),
+(94, 0, 13, 1, 1, NULL),
+(95, 0, 12, 1, 1, NULL),
+(96, 15, 17, 1, 3, NULL),
+(97, 20, 25, 1, 1, NULL),
+(98, 26, 30, 1, 4, NULL),
+(99, 31, 35, 1, 2, NULL),
+(100, 151, 500, 1, 5, NULL),
+(101, 31, 120, 1, 4, NULL),
+(102, 51, 120, 1, 4, NULL),
+(103, 36, 120, 1, 5, NULL),
+(104, 13, 14, 1, 4, NULL),
+(105, 13, 14, 1, 5, NULL),
+(106, 0, 15, 1, 4, NULL);
 
 -- --------------------------------------------------------
 
@@ -1330,7 +1558,7 @@ INSERT INTO `grupo_edad` (`id`, `edad_min`, `edad_max`, `estado`, `id_alimento`,
 -- Estructura de tabla para la tabla `grupo_edad_temp`
 --
 
-CREATE TABLE `grupo_edad_temp` (
+CREATE TABLE IF NOT EXISTS `grupo_edad_temp` (
   `id` int(11) NOT NULL,
   `id_edad` int(11) DEFAULT NULL,
   `id_temp` int(11) DEFAULT NULL,
@@ -1338,7 +1566,7 @@ CREATE TABLE `grupo_edad_temp` (
   `cantidad` decimal(4,4) DEFAULT NULL,
   `estado` tinyint(4) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=465 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `grupo_edad_temp`
@@ -1347,7 +1575,7 @@ CREATE TABLE `grupo_edad_temp` (
 INSERT INTO `grupo_edad_temp` (`id`, `id_edad`, `id_temp`, `id_control`, `cantidad`, `estado`, `deleted_at`) VALUES
 (169, 25, 64, 38, '0.0150', 1, NULL),
 (170, 25, 65, 38, '0.0133', 1, NULL),
-(171, 25, 66, 38, '0.4640', 1, NULL),
+(171, 25, 66, 38, '0.1640', 1, NULL),
 (172, 25, 67, 38, '0.4163', 1, NULL),
 (173, 25, 68, 38, '0.7640', 1, NULL),
 (174, 25, 69, 38, '0.0467', 1, NULL),
@@ -1429,8 +1657,8 @@ INSERT INTO `grupo_edad_temp` (`id`, `id_edad`, `id_temp`, `id_control`, `cantid
 (253, 50, 79, 44, '0.0150', 1, NULL),
 (254, 50, 80, 44, '0.0169', 1, NULL),
 (255, 50, 81, 44, '0.0350', 1, NULL),
-(256, 51, 83, 45, '0.0210', 1, NULL),
-(257, 51, 84, 45, '0.0153', 1, NULL),
+(256, 51, 83, 45, '0.1150', 1, NULL),
+(257, 51, 84, 45, '0.1354', 1, NULL),
 (258, 51, 85, 45, '0.1100', 1, NULL),
 (259, 52, 83, 45, '0.1230', 1, NULL),
 (260, 52, 84, 45, '0.1570', 1, NULL),
@@ -1482,7 +1710,160 @@ INSERT INTO `grupo_edad_temp` (`id`, `id_edad`, `id_temp`, `id_control`, `cantid
 (306, 67, 91, 55, '0.0135', 1, NULL),
 (307, 68, 89, 55, '0.0369', 1, NULL),
 (308, 68, 90, 55, '0.0147', 1, NULL),
-(309, 68, 91, 55, '0.0153', 1, NULL);
+(309, 68, 91, 55, '0.0153', 1, NULL),
+(312, 85, 113, 60, '0.0150', 1, NULL),
+(313, 85, 114, 60, '0.0168', 1, NULL),
+(314, 85, 115, 60, '0.1746', 1, NULL),
+(315, 85, 116, 60, '0.2167', 1, NULL),
+(316, 85, 117, 60, '0.0133', 1, NULL),
+(317, 85, 118, 60, '0.2130', 1, NULL),
+(318, 85, 119, 60, '0.1673', 1, NULL),
+(319, 86, 113, 60, '0.2169', 1, NULL),
+(320, 86, 114, 60, '0.4640', 1, NULL),
+(321, 86, 115, 60, '0.1347', 1, NULL),
+(322, 86, 116, 60, '0.1647', 1, NULL),
+(323, 86, 117, 60, '0.1394', 1, NULL),
+(324, 86, 118, 60, '0.4163', 1, NULL),
+(325, 86, 119, 60, '0.1674', 1, NULL),
+(326, 87, 113, 60, '0.2165', 1, NULL),
+(327, 87, 114, 60, '0.2169', 1, NULL),
+(328, 87, 115, 60, '0.7640', 1, NULL),
+(329, 87, 116, 60, '0.0379', 1, NULL),
+(330, 87, 117, 60, '0.1367', 1, NULL),
+(331, 87, 118, 60, '0.2060', 1, NULL),
+(332, 87, 119, 60, '0.0467', 1, NULL),
+(333, 88, 113, 60, '0.0364', 1, NULL),
+(334, 88, 114, 60, '0.2167', 1, NULL),
+(335, 88, 115, 60, '0.1369', 1, NULL),
+(336, 88, 116, 60, '0.0417', 1, NULL),
+(337, 88, 117, 60, '0.2167', 1, NULL),
+(338, 88, 118, 60, '0.1367', 1, NULL),
+(339, 88, 119, 60, '0.0387', 1, NULL),
+(340, 89, 120, 61, '0.0150', 1, NULL),
+(341, 89, 121, 61, '0.0168', 1, NULL),
+(342, 89, 122, 61, '0.1746', 1, NULL),
+(343, 89, 123, 61, '0.2167', 1, NULL),
+(344, 89, 124, 61, '0.0133', 1, NULL),
+(345, 89, 125, 61, '0.2130', 1, NULL),
+(346, 89, 126, 61, '0.1673', 1, NULL),
+(347, 90, 120, 61, '0.2169', 1, NULL),
+(348, 90, 121, 61, '0.4640', 1, NULL),
+(349, 90, 122, 61, '0.1347', 1, NULL),
+(350, 90, 123, 61, '0.1647', 1, NULL),
+(351, 90, 124, 61, '0.1394', 1, NULL),
+(352, 90, 125, 61, '0.4163', 1, NULL),
+(353, 90, 126, 61, '0.1674', 1, NULL),
+(354, 91, 120, 61, '0.2165', 1, NULL),
+(355, 91, 121, 61, '0.2169', 1, NULL),
+(356, 91, 122, 61, '0.7640', 1, NULL),
+(357, 91, 123, 61, '0.0379', 1, NULL),
+(358, 91, 124, 61, '0.1367', 1, NULL),
+(359, 91, 125, 61, '0.2060', 1, NULL),
+(360, 91, 126, 61, '0.0467', 1, NULL),
+(361, 92, 120, 61, '0.0364', 1, NULL),
+(362, 92, 121, 61, '0.2167', 1, NULL),
+(363, 92, 122, 61, '0.1369', 1, NULL),
+(364, 92, 123, 61, '0.0417', 1, NULL),
+(365, 92, 124, 61, '0.2167', 1, NULL),
+(366, 92, 125, 61, '0.1367', 1, NULL),
+(367, 92, 126, 61, '0.0387', 1, NULL),
+(368, 93, 120, 61, '0.0014', 1, NULL),
+(369, 93, 121, 61, '0.0314', 1, NULL),
+(370, 93, 122, 61, '0.0136', 1, NULL),
+(371, 93, 123, 61, '0.0134', 1, NULL),
+(372, 93, 124, 61, '0.0385', 1, NULL),
+(373, 93, 125, 61, '0.0314', 1, NULL),
+(374, 93, 126, 61, '0.0135', 1, NULL),
+(375, 94, 74, 40, '0.0153', 1, NULL),
+(376, 94, 75, 40, '0.1240', 1, NULL),
+(377, 94, 76, 40, '0.0134', 1, NULL),
+(378, 94, 77, 40, '0.0147', 1, NULL),
+(379, 94, 78, 40, '0.0350', 1, NULL),
+(380, 95, 127, 62, '0.0150', 1, NULL),
+(381, 95, 128, 62, '0.2169', 1, NULL),
+(382, 95, 129, 62, '0.2165', 1, NULL),
+(383, 95, 130, 62, '0.0364', 1, NULL),
+(384, 95, 131, 62, '0.0014', 1, NULL),
+(385, 95, 132, 62, '0.0168', 1, NULL),
+(386, 95, 133, 62, '0.4640', 1, NULL),
+(387, 96, 127, 62, '0.2169', 1, NULL),
+(388, 96, 128, 62, '0.2167', 1, NULL),
+(389, 96, 129, 62, '0.0314', 1, NULL),
+(390, 96, 130, 62, '0.1746', 1, NULL),
+(391, 96, 131, 62, '0.1347', 1, NULL),
+(392, 96, 132, 62, '0.7640', 1, NULL),
+(393, 96, 133, 62, '0.1369', 1, NULL),
+(394, 97, 127, 62, '0.0136', 1, NULL),
+(395, 97, 128, 62, '0.2167', 1, NULL),
+(396, 97, 129, 62, '0.1647', 1, NULL),
+(397, 97, 130, 62, '0.0379', 1, NULL),
+(398, 97, 131, 62, '0.0417', 1, NULL),
+(399, 97, 132, 62, '0.0134', 1, NULL),
+(400, 97, 133, 62, '0.0133', 1, NULL),
+(401, 98, 127, 62, '0.1394', 1, NULL),
+(402, 98, 128, 62, '0.1367', 1, NULL),
+(403, 98, 129, 62, '0.2167', 1, NULL),
+(404, 98, 130, 62, '0.0385', 1, NULL),
+(405, 98, 131, 62, '0.2130', 1, NULL),
+(406, 98, 132, 62, '0.4163', 1, NULL),
+(407, 98, 133, 62, '0.2060', 1, NULL),
+(408, 99, 127, 62, '0.1367', 1, NULL),
+(409, 99, 128, 62, '0.0314', 1, NULL),
+(410, 99, 129, 62, '0.1673', 1, NULL),
+(411, 99, 130, 62, '0.1674', 1, NULL),
+(412, 99, 131, 62, '0.0467', 1, NULL),
+(413, 99, 132, 62, '0.0387', 1, NULL),
+(414, 99, 133, 62, '0.0135', 1, NULL),
+(415, 100, 89, 55, '0.1520', 1, NULL),
+(416, 100, 90, 55, '0.1480', 1, NULL),
+(417, 100, 91, 55, '0.1153', 1, NULL),
+(418, 25, 134, 38, '0.1150', 1, NULL),
+(419, 26, 134, 38, '0.1340', 1, NULL),
+(420, 27, 134, 38, '0.1454', 1, NULL),
+(421, 28, 134, 38, '0.1540', 1, NULL),
+(422, 101, 64, 38, '0.1150', 1, NULL),
+(423, 101, 65, 38, '0.1610', 1, NULL),
+(424, 101, 66, 38, '0.1351', 1, NULL),
+(425, 101, 67, 38, '0.1354', 1, NULL),
+(426, 101, 68, 38, '0.1350', 1, NULL),
+(427, 101, 69, 38, '0.0000', 1, NULL),
+(428, 101, 70, 38, '0.0000', 1, NULL),
+(429, 101, 134, 38, '0.0000', 1, NULL),
+(430, 102, 74, 40, '0.1150', 1, NULL),
+(431, 102, 75, 40, '0.1160', 1, NULL),
+(432, 102, 76, 40, '0.1350', 1, NULL),
+(433, 102, 77, 40, '0.1670', 1, NULL),
+(434, 102, 78, 40, '0.1670', 1, NULL),
+(435, 103, 127, 62, '0.1570', 1, NULL),
+(436, 103, 128, 62, '0.1140', 1, NULL),
+(437, 103, 129, 62, '0.1350', 1, NULL),
+(438, 103, 130, 62, '0.1396', 1, NULL),
+(439, 103, 131, 62, '0.1340', 1, NULL),
+(440, 103, 132, 62, '0.1680', 1, NULL),
+(441, 103, 133, 62, '0.1747', 1, NULL),
+(442, 104, 113, 60, '0.1150', 1, NULL),
+(443, 104, 114, 60, '0.1140', 1, NULL),
+(444, 104, 115, 60, '0.1654', 1, NULL),
+(445, 104, 116, 60, '0.1357', 1, NULL),
+(446, 104, 117, 60, '0.1367', 1, NULL),
+(447, 104, 118, 60, '0.1470', 1, NULL),
+(448, 104, 119, 60, '0.1369', 1, NULL),
+(449, 105, 64, 38, '0.1150', 1, NULL),
+(450, 105, 65, 38, '0.1460', 1, NULL),
+(451, 105, 66, 38, '0.1470', 1, NULL),
+(452, 105, 67, 38, '0.1670', 1, NULL),
+(453, 105, 68, 38, '0.1140', 1, NULL),
+(454, 105, 69, 38, '0.1140', 1, NULL),
+(455, 105, 70, 38, '0.1470', 1, NULL),
+(456, 105, 134, 38, '0.1470', 1, NULL),
+(457, 106, 71, 39, '0.1340', 1, NULL),
+(458, 106, 72, 39, '0.1470', 1, NULL),
+(459, 106, 73, 39, '0.1140', 1, NULL),
+(460, 106, 135, 39, '0.1150', 1, NULL),
+(461, 29, 135, 39, '0.1570', 1, NULL),
+(462, 30, 135, 39, '0.1150', 1, NULL),
+(463, 41, 135, 39, '0.1741', 1, NULL),
+(464, 43, 135, 39, '0.1470', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -1490,13 +1871,13 @@ INSERT INTO `grupo_edad_temp` (`id`, `id_edad`, `id_temp`, `id_control`, `cantid
 -- Estructura de tabla para la tabla `grupo_temperatura`
 --
 
-CREATE TABLE `grupo_temperatura` (
+CREATE TABLE IF NOT EXISTS `grupo_temperatura` (
   `id` int(11) NOT NULL,
   `temp_min` int(11) DEFAULT NULL,
   `temp_max` int(11) DEFAULT NULL,
   `estado` tinyint(4) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=136 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `grupo_temperatura`
@@ -1530,7 +1911,30 @@ INSERT INTO `grupo_temperatura` (`id`, `temp_min`, `temp_max`, `estado`, `delete
 (88, 29, 30, 1, NULL),
 (89, 9, 15, 1, NULL),
 (90, 19, 25, 1, NULL),
-(91, 29, 30, 1, NULL);
+(91, 29, 30, 1, NULL),
+(113, 10, 15, 1, NULL),
+(114, 16, 18, 1, NULL),
+(115, 19, 25, 1, NULL),
+(116, 26, 28, 1, NULL),
+(117, 29, 30, 1, NULL),
+(118, 31, 34, 1, NULL),
+(119, 35, 37, 1, NULL),
+(120, 10, 15, 1, NULL),
+(121, 16, 18, 1, NULL),
+(122, 19, 25, 1, NULL),
+(123, 26, 28, 1, NULL),
+(124, 29, 30, 1, NULL),
+(125, 31, 34, 1, NULL),
+(126, 35, 37, 1, NULL),
+(127, 10, 15, 1, NULL),
+(128, 16, 18, 1, NULL),
+(129, 19, 25, 1, NULL),
+(130, 26, 28, 1, NULL),
+(131, 29, 30, 1, NULL),
+(132, 31, 34, 1, NULL),
+(133, 35, 37, 1, NULL),
+(134, 38, 40, 1, NULL),
+(135, 16, 25, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -1538,14 +1942,14 @@ INSERT INTO `grupo_temperatura` (`id`, `temp_min`, `temp_max`, `estado`, `delete
 -- Estructura de tabla para la tabla `huevo`
 --
 
-CREATE TABLE `huevo` (
+CREATE TABLE IF NOT EXISTS `huevo` (
   `id` int(11) NOT NULL,
   `cantidad_maple` int(11) DEFAULT NULL,
   `cantidad_huevo` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `id_tipo_huevo` int(11) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=185 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `huevo`
@@ -1734,13 +2138,15 @@ INSERT INTO `huevo` (`id`, `cantidad_maple`, `cantidad_huevo`, `fecha`, `id_tipo
 (180, 8, 240, '2017-04-10 20:16:22', 3, NULL),
 (181, 22, 660, '2017-04-11 19:00:15', 2, NULL),
 (182, 3, 45, '2017-04-11 19:00:33', 1, NULL),
-(183, 4, 120, '2017-04-11 19:00:51', 3, NULL);
+(183, 4, 120, '2017-04-11 19:00:51', 3, NULL),
+(184, 5, 150, '2017-05-23 15:17:27', 4, NULL);
 
 --
 -- Disparadores `huevo`
 --
 DELIMITER $$
-CREATE TRIGGER `actualizar_huevo_deposito` AFTER UPDATE ON `huevo` FOR EACH ROW BEGIN
+CREATE TRIGGER `actualizar_huevo_deposito` AFTER UPDATE ON `huevo`
+ FOR EACH ROW BEGIN
 DECLARE maples integer;
 DECLARE huevos integer;
 SET maples = NEW.cantidad_maple - OLD.cantidad_maple;
@@ -1755,7 +2161,8 @@ END
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `registrar_huevo_deposito` AFTER INSERT ON `huevo` FOR EACH ROW BEGIN
+CREATE TRIGGER `registrar_huevo_deposito` AFTER INSERT ON `huevo`
+ FOR EACH ROW BEGIN
 IF EXISTS(SELECT * from huevo_deposito WHERE id_tipo_huevo=NEW.id_tipo_huevo )THEN 
  UPDATE huevo_deposito SET huevo_deposito.cantidad_maple = huevo_deposito.cantidad_maple + NEW.cantidad_maple
  WHERE huevo_deposito.id_tipo_huevo = NEW.id_tipo_huevo; 
@@ -1777,18 +2184,18 @@ DELIMITER ;
 -- Estructura de tabla para la tabla `huevo_acumulado`
 --
 
-CREATE TABLE `huevo_acumulado` (
+CREATE TABLE IF NOT EXISTS `huevo_acumulado` (
   `id` int(11) NOT NULL,
   `cantidad` int(11) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `huevo_acumulado`
 --
 
 INSERT INTO `huevo_acumulado` (`id`, `cantidad`, `deleted_at`) VALUES
-(1, 9067, NULL);
+(1, 40003, NULL);
 
 -- --------------------------------------------------------
 
@@ -1796,13 +2203,13 @@ INSERT INTO `huevo_acumulado` (`id`, `cantidad`, `deleted_at`) VALUES
 -- Estructura de tabla para la tabla `huevo_deposito`
 --
 
-CREATE TABLE `huevo_deposito` (
+CREATE TABLE IF NOT EXISTS `huevo_deposito` (
   `id` int(11) NOT NULL,
   `cantidad_maple` int(11) NOT NULL,
   `cantidad_huevo` int(11) DEFAULT NULL,
   `id_tipo_huevo` int(11) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `huevo_deposito`
@@ -1812,7 +2219,8 @@ INSERT INTO `huevo_deposito` (`id`, `cantidad_maple`, `cantidad_huevo`, `id_tipo
 (1, 36, 1080, 2, NULL),
 (2, 12, 360, 3, NULL),
 (3, 3, 45, 1, NULL),
-(4, 0, 0, 5, NULL);
+(4, 0, 0, 5, NULL),
+(5, 5, 150, 4, NULL);
 
 -- --------------------------------------------------------
 
@@ -1820,7 +2228,7 @@ INSERT INTO `huevo_deposito` (`id`, `cantidad_maple`, `cantidad_huevo`, `id_tipo
 -- Estructura de tabla para la tabla `ingreso_varios`
 --
 
-CREATE TABLE `ingreso_varios` (
+CREATE TABLE IF NOT EXISTS `ingreso_varios` (
   `id` int(11) NOT NULL,
   `detalle` varchar(200) DEFAULT NULL,
   `precio` decimal(10,2) DEFAULT NULL,
@@ -1835,12 +2243,12 @@ CREATE TABLE `ingreso_varios` (
 -- Estructura de tabla para la tabla `maple`
 --
 
-CREATE TABLE `maple` (
+CREATE TABLE IF NOT EXISTS `maple` (
   `id` int(11) NOT NULL,
   `tamano` varchar(15) DEFAULT NULL,
   `cantidad` int(11) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `maple`
@@ -1858,7 +2266,7 @@ INSERT INTO `maple` (`id`, `tamano`, `cantidad`, `deleted_at`) VALUES
 -- Estructura de tabla para la tabla `migrations`
 --
 
-CREATE TABLE `migrations` (
+CREATE TABLE IF NOT EXISTS `migrations` (
   `migration` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -1869,7 +2277,7 @@ CREATE TABLE `migrations` (
 -- Estructura de tabla para la tabla `password_resets`
 --
 
-CREATE TABLE `password_resets` (
+CREATE TABLE IF NOT EXISTS `password_resets` (
   `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
@@ -1881,20 +2289,23 @@ CREATE TABLE `password_resets` (
 -- Estructura de tabla para la tabla `postergar_vacuna`
 --
 
-CREATE TABLE `postergar_vacuna` (
+CREATE TABLE IF NOT EXISTS `postergar_vacuna` (
   `id` int(11) NOT NULL,
   `id_control_vacuna` int(11) DEFAULT NULL,
   `estado` tinyint(4) DEFAULT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `postergar_vacuna`
 --
 
 INSERT INTO `postergar_vacuna` (`id`, `id_control_vacuna`, `estado`, `fecha`, `deleted_at`) VALUES
-(1, 36, 1, '2017-04-12 13:49:58', NULL);
+(1, 36, 1, '2017-04-12 13:49:58', NULL),
+(2, 42, 1, '2017-05-22 20:52:08', NULL),
+(3, 81, 1, '2017-05-23 02:56:15', NULL),
+(4, 82, 1, '2017-05-23 13:27:07', NULL);
 
 -- --------------------------------------------------------
 
@@ -1902,7 +2313,7 @@ INSERT INTO `postergar_vacuna` (`id`, `id_control_vacuna`, `estado`, `fecha`, `d
 -- Estructura de tabla para la tabla `postura_huevo`
 --
 
-CREATE TABLE `postura_huevo` (
+CREATE TABLE IF NOT EXISTS `postura_huevo` (
   `id` int(11) NOT NULL,
   `celda1` int(11) DEFAULT NULL,
   `celda2` int(11) DEFAULT NULL,
@@ -1914,7 +2325,7 @@ CREATE TABLE `postura_huevo` (
   `id_fases_galpon` int(11) DEFAULT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=531 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `postura_huevo`
@@ -2429,13 +2840,35 @@ INSERT INTO `postura_huevo` (`id`, `celda1`, `celda2`, `celda3`, `celda4`, `post
 (506, 1278, 268, 0, 0, 70, 1546, 4, 8, '2017-04-11 13:58:04', NULL),
 (507, 1520, 160, 0, 0, 80, 1680, 0, 10, '2017-04-11 14:25:13', NULL),
 (508, 775, 0, 0, 0, 41, 775, 0, 1, '2017-04-12 11:46:23', NULL),
-(509, 961, 0, 0, 0, 52, 961, 0, 3, '2017-04-12 12:04:57', NULL);
+(509, 961, 0, 0, 0, 52, 961, 0, 3, '2017-04-12 12:04:57', NULL),
+(510, 500, 500, 400, 350, 87, 1750, 1, 26, '2017-05-22 20:31:46', NULL),
+(511, 500, 0, 0, 0, 20, 500, 1, 33, '2017-05-23 02:47:58', NULL),
+(512, 500, 500, 0, 0, 50, 1000, 0, 34, '2017-05-23 03:01:30', NULL),
+(513, 500, 0, 0, 0, 20, 500, 0, 32, '2017-07-24 03:23:42', NULL),
+(514, 500, 500, 500, 500, 100, 2000, 3, 29, '2017-05-23 13:22:31', NULL),
+(515, 500, 400, 500, 500, 76, 1900, 1, 32, '2017-05-23 23:03:00', NULL),
+(516, 0, 500, 0, 0, 25, 500, 1, 34, '2017-05-23 23:13:44', NULL),
+(517, 0, 0, 0, 0, 0, 0, 1, 36, '2017-05-24 03:02:59', NULL),
+(518, 504, 450, 452, 456, 93, 1862, 0, 26, '2017-05-24 04:06:05', NULL),
+(519, 786, 412, 500, 475, 86, 2173, 0, 37, '2017-05-24 04:06:17', NULL),
+(520, 450, 410, 500, 400, 88, 1760, 0, 29, '2017-05-24 04:06:42', NULL),
+(521, 154, 455, 500, 1223, 93, 2332, 0, 32, '2017-05-24 04:06:49', NULL),
+(522, 500, 500, 500, 500, 80, 2000, 0, 32, '2017-05-25 18:44:46', NULL),
+(523, 500, 500, 500, 400, 95, 1900, 0, 29, '2017-06-25 19:22:57', NULL),
+(524, 500, 500, 400, 600, 100, 2000, 0, 29, '2017-05-25 21:53:26', NULL),
+(525, 500, 400, 500, 400, 72, 1800, 0, 37, '2017-05-25 21:53:34', NULL),
+(526, 500, 400, 500, 400, 90, 1800, 0, 26, '2017-05-25 21:53:40', NULL),
+(527, 555, 500, 500, 453, 80, 2008, 2, 32, '2017-05-26 14:06:01', NULL),
+(528, 401, 500, 500, 0, 70, 1401, 1, 29, '2017-05-26 14:19:47', NULL),
+(529, 500, 400, 500, 500, 76, 1900, 0, 37, '2017-05-26 14:25:39', NULL),
+(530, 600, 400, 500, 0, 75, 1500, 0, 26, '2017-05-26 14:26:07', NULL);
 
 --
 -- Disparadores `postura_huevo`
 --
 DELIMITER $$
-CREATE TRIGGER `actualizar_huevos_acumulados_ph` AFTER UPDATE ON `postura_huevo` FOR EACH ROW BEGIN
+CREATE TRIGGER `actualizar_huevos_acumulados_ph` AFTER UPDATE ON `postura_huevo`
+ FOR EACH ROW BEGIN
 DECLARE huevos integer;
 SET huevos = NEW.cantidad_total - OLD.cantidad_total;
 
@@ -2444,7 +2877,8 @@ END
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `agregar_huevos_acumulados_ph` AFTER INSERT ON `postura_huevo` FOR EACH ROW BEGIN
+CREATE TRIGGER `agregar_huevos_acumulados_ph` AFTER INSERT ON `postura_huevo`
+ FOR EACH ROW BEGIN
 
 IF EXISTS(SELECT * from huevo_acumulado )THEN 
 UPDATE huevo_acumulado SET huevo_acumulado.cantidad = huevo_acumulado.cantidad + NEW.cantidad_total;
@@ -2462,14 +2896,14 @@ DELIMITER ;
 -- Estructura de tabla para la tabla `rango_edad`
 --
 
-CREATE TABLE `rango_edad` (
+CREATE TABLE IF NOT EXISTS `rango_edad` (
   `id` int(11) NOT NULL,
   `edad_min` int(11) DEFAULT NULL,
   `edad_max` int(11) DEFAULT NULL,
   `id_alimento` int(11) NOT NULL,
   `estado` tinyint(4) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `rango_edad`
@@ -2480,13 +2914,13 @@ INSERT INTO `rango_edad` (`id`, `edad_min`, `edad_max`, `id_alimento`, `estado`,
 (2, 11, 13, 3, 1, '2017-05-18'),
 (3, 14, 17, 2, 1, NULL),
 (4, 17, 21, 4, 1, '2017-05-18'),
-(5, 19, 25, 6, 1, NULL),
+(5, 19, 25, 6, 1, '2017-05-21'),
 (6, 26, 30, 4, 1, '2017-05-18'),
 (7, 35, 45, 2, 1, '2017-05-18'),
 (9, 0, 5, 1, 1, NULL),
 (10, 26, 30, 5, 1, NULL),
 (11, 31, 35, 4, 1, NULL),
-(12, 45, 150, 5, 1, NULL);
+(12, 45, 150, 5, 1, '2017-05-21');
 
 -- --------------------------------------------------------
 
@@ -2494,13 +2928,13 @@ INSERT INTO `rango_edad` (`id`, `edad_min`, `edad_max`, `id_alimento`, `estado`,
 -- Estructura de tabla para la tabla `rango_temperatura`
 --
 
-CREATE TABLE `rango_temperatura` (
+CREATE TABLE IF NOT EXISTS `rango_temperatura` (
   `id` int(11) NOT NULL,
   `temp_min` int(11) DEFAULT NULL,
   `temp_max` int(11) DEFAULT NULL,
   `estado` tinyint(4) NOT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `rango_temperatura`
@@ -2514,7 +2948,7 @@ INSERT INTO `rango_temperatura` (`id`, `temp_min`, `temp_max`, `estado`, `delete
 (5, 31, 40, 1, '2017-02-09'),
 (6, 9, 15, 1, NULL),
 (7, 16, 18, 1, '2017-05-18'),
-(8, 19, 25, 1, NULL),
+(8, 19, 25, 1, '2017-05-21'),
 (9, 26, 28, 1, '2017-05-18'),
 (10, 31, 34, 1, '2017-05-18'),
 (11, 35, 39, 1, '2017-05-18'),
@@ -2523,10 +2957,25 @@ INSERT INTO `rango_temperatura` (`id`, `temp_min`, `temp_max`, `estado`, `delete
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `seguir_alimentacion`
+--
+
+CREATE TABLE IF NOT EXISTS `seguir_alimentacion` (
+  `id` int(11) NOT NULL,
+  `estado` tinyint(4) DEFAULT NULL,
+  `id_edad` int(11) DEFAULT NULL,
+  `id_alimento` int(11) DEFAULT NULL,
+  `id_silo` int(11) DEFAULT NULL,
+  `deleted_at` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `silo`
 --
 
-CREATE TABLE `silo` (
+CREATE TABLE IF NOT EXISTS `silo` (
   `id` int(11) NOT NULL,
   `nombre` varchar(25) DEFAULT NULL,
   `capacidad` decimal(10,1) DEFAULT NULL,
@@ -2543,12 +2992,13 @@ CREATE TABLE `silo` (
 --
 
 INSERT INTO `silo` (`id`, `nombre`, `capacidad`, `cantidad`, `cantidad_minima`, `id_alimento`, `estado`, `numero`, `deleted_at`) VALUES
-(1, 'BOLSA', '400.0', '400.0', '40.0', 1, 1, 0, NULL),
-(2, 'SILO 1 J1', '6000.0', '2722.3', '200.0', 2, 1, 0, NULL),
+(1, 'BOLSA', '5000.0', '123.1', '40.0', 1, 1, 0, NULL),
+(2, 'SILO 1 J1', '6000.0', '6000.0', '200.0', 2, 1, 0, NULL),
 (3, 'SILO 2 J2', '6000.0', '6000.0', '500.0', 3, 1, 0, NULL),
-(4, 'SILO 3 J3', '6000.0', '768.2', '600.0', 4, 1, 0, NULL),
-(5, 'SILO 4 G4', '12000.0', '7427.6', '600.0', 5, 1, 0, NULL),
-(6, 'SILO 5', '6000.0', '6000.0', '600.0', 6, 0, 0, '2017-02-23');
+(4, 'SILO 3 J3', '6000.0', '6000.0', '600.0', 4, 1, 0, NULL),
+(5, 'SILO 4 G4', '12000.0', '4609.4', '600.0', 5, 1, 0, NULL),
+(6, 'SILO 5', '6000.0', '6000.0', '600.0', 6, 0, 0, '2017-02-23'),
+(7, 'SILO 5', '5000.0', '4380.0', '500.0', 1, 1, 5, NULL);
 
 -- --------------------------------------------------------
 
@@ -2556,14 +3006,14 @@ INSERT INTO `silo` (`id`, `nombre`, `capacidad`, `cantidad`, `cantidad_minima`, 
 -- Estructura de tabla para la tabla `sobrante`
 --
 
-CREATE TABLE `sobrante` (
+CREATE TABLE IF NOT EXISTS `sobrante` (
   `id` int(11) NOT NULL,
   `cantidad_maple` int(11) DEFAULT NULL,
   `cantidad_huevo` int(11) DEFAULT NULL,
   `id_tipo_caja` int(11) DEFAULT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=333 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `sobrante`
@@ -2909,11 +3359,11 @@ INSERT INTO `sobrante` (`id`, `cantidad_maple`, `cantidad_huevo`, `id_tipo_caja`
 -- Estructura de tabla para la tabla `temperatura`
 --
 
-CREATE TABLE `temperatura` (
+CREATE TABLE IF NOT EXISTS `temperatura` (
   `id` int(11) NOT NULL,
   `temperatura` int(11) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `temperatura`
@@ -2928,7 +3378,7 @@ INSERT INTO `temperatura` (`id`, `temperatura`, `deleted_at`) VALUES
 -- Estructura de tabla para la tabla `tipo_caja`
 --
 
-CREATE TABLE `tipo_caja` (
+CREATE TABLE IF NOT EXISTS `tipo_caja` (
   `id` int(11) NOT NULL,
   `tipo` varchar(15) DEFAULT NULL,
   `precio` decimal(10,4) DEFAULT NULL,
@@ -2937,7 +3387,7 @@ CREATE TABLE `tipo_caja` (
   `id_maple` int(11) DEFAULT NULL,
   `estado` tinyint(4) NOT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `tipo_caja`
@@ -2957,14 +3407,14 @@ INSERT INTO `tipo_caja` (`id`, `tipo`, `precio`, `color`, `cantidad_maple`, `id_
 -- Estructura de tabla para la tabla `tipo_huevo`
 --
 
-CREATE TABLE `tipo_huevo` (
+CREATE TABLE IF NOT EXISTS `tipo_huevo` (
   `id` int(11) NOT NULL,
   `tipo` varchar(15) DEFAULT NULL,
   `precio` decimal(10,4) DEFAULT NULL,
   `estado` tinyint(4) DEFAULT NULL,
   `id_maple` int(11) DEFAULT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `tipo_huevo`
@@ -2983,8 +3433,8 @@ INSERT INTO `tipo_huevo` (`id`, `tipo`, `precio`, `estado`, `id_maple`, `deleted
 -- Estructura de tabla para la tabla `users`
 --
 
-CREATE TABLE `users` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(10) unsigned NOT NULL,
   `username` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -2993,15 +3443,16 @@ CREATE TABLE `users` (
   `pass2` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `name`, `email`, `password`, `remember_token`, `pass2`, `created_at`, `updated_at`) VALUES
-(9, '', '', 'tito', '$2y$10$V.6btJ1/7pJEFW0lyKejkeP7FaxCBJ5agEGjlkvAN84xE4rhImuyO', 'utOmkcZUez6aS4TknFNHSgvIow39aCexEDXBw5foJ4vv7zJ6Xt5iFNWAklVa', '123456', NULL, NULL),
-(12, '', '', 'higa', '$2y$10$urhS5uXw/.m2j0qHq3/UOOUBfAR/J6mhOzYounKKdIP64TrR.bUJ2', 'Rb4L0qx06HwG2nxbQpT06ZSLRTpnpjEeMtiXi9TBLl58Ws1BL2HQw39EV27z', '2969389', NULL, NULL);
+(9, '', '', 'tito', '$2y$10$V.6btJ1/7pJEFW0lyKejkeP7FaxCBJ5agEGjlkvAN84xE4rhImuyO', 'OsSmDAKDEJmtWvnmivooATYE5rYZw7UPWeLUG6dppX20WIa90HhevMsxaSGz', '123456', NULL, NULL),
+(12, '', '', 'higa', '$2y$10$urhS5uXw/.m2j0qHq3/UOOUBfAR/J6mhOzYounKKdIP64TrR.bUJ2', 'Rb4L0qx06HwG2nxbQpT06ZSLRTpnpjEeMtiXi9TBLl58Ws1BL2HQw39EV27z', '2969389', NULL, NULL),
+(13, '', '', 'admin', '$2y$10$MMvyFfJMY86izyJb.GvyfOYJyguAk.xAh6zIqNGUKtj9mZIXje2f6', NULL, 'admin', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3009,7 +3460,7 @@ INSERT INTO `users` (`id`, `username`, `name`, `email`, `password`, `remember_to
 -- Estructura de tabla para la tabla `vacuna`
 --
 
-CREATE TABLE `vacuna` (
+CREATE TABLE IF NOT EXISTS `vacuna` (
   `id` int(11) NOT NULL,
   `edad` int(11) DEFAULT NULL,
   `nombre` varchar(50) DEFAULT NULL,
@@ -3017,7 +3468,7 @@ CREATE TABLE `vacuna` (
   `estado` tinyint(4) DEFAULT NULL,
   `precio` decimal(6,2) NOT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `vacuna`
@@ -3072,7 +3523,7 @@ INSERT INTO `vacuna` (`id`, `edad`, `nombre`, `detalle`, `estado`, `precio`, `de
 -- Estructura de tabla para la tabla `vacuna_emergente`
 --
 
-CREATE TABLE `vacuna_emergente` (
+CREATE TABLE IF NOT EXISTS `vacuna_emergente` (
   `id` int(11) NOT NULL,
   `nombre` varchar(50) DEFAULT NULL,
   `detalle` varchar(200) DEFAULT NULL,
@@ -3087,13 +3538,13 @@ CREATE TABLE `vacuna_emergente` (
 -- Estructura de tabla para la tabla `venta_caja`
 --
 
-CREATE TABLE `venta_caja` (
+CREATE TABLE IF NOT EXISTS `venta_caja` (
   `id` int(11) NOT NULL,
   `fecha` date DEFAULT NULL,
   `precio` decimal(10,2) DEFAULT NULL,
   `estado` tinyint(4) NOT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `venta_caja`
@@ -3142,13 +3593,13 @@ INSERT INTO `venta_caja` (`id`, `fecha`, `precio`, `estado`, `deleted_at`) VALUE
 -- Estructura de tabla para la tabla `venta_huevo`
 --
 
-CREATE TABLE `venta_huevo` (
+CREATE TABLE IF NOT EXISTS `venta_huevo` (
   `id` int(11) NOT NULL,
   `fecha` date DEFAULT NULL,
   `precio` decimal(10,2) DEFAULT NULL,
   `estado` tinyint(4) NOT NULL,
   `deleted_at` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `venta_huevo`
@@ -3405,6 +3856,15 @@ ALTER TABLE `rango_temperatura`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `seguir_alimentacion`
+--
+ALTER TABLE `seguir_alimentacion`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_edad` (`id_edad`),
+  ADD KEY `id_alimento` (`id_alimento`),
+  ADD KEY `id_silo` (`id_silo`);
+
+--
 -- Indices de la tabla `silo`
 --
 ALTER TABLE `silo`
@@ -3477,17 +3937,17 @@ ALTER TABLE `venta_huevo`
 -- AUTO_INCREMENT de la tabla `alimento`
 --
 ALTER TABLE `alimento`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT de la tabla `caja`
 --
 ALTER TABLE `caja`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=372;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=373;
 --
 -- AUTO_INCREMENT de la tabla `caja_deposito`
 --
 ALTER TABLE `caja_deposito`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT de la tabla `cantidad_maple`
 --
@@ -3497,17 +3957,17 @@ ALTER TABLE `cantidad_maple`
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT de la tabla `compra`
 --
 ALTER TABLE `compra`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=41;
 --
 -- AUTO_INCREMENT de la tabla `consumo`
 --
 ALTER TABLE `consumo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=44;
 --
 -- AUTO_INCREMENT de la tabla `consumo_emergente`
 --
@@ -3517,87 +3977,87 @@ ALTER TABLE `consumo_emergente`
 -- AUTO_INCREMENT de la tabla `consumo_vacuna`
 --
 ALTER TABLE `consumo_vacuna`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `control_alimento_galpon`
 --
 ALTER TABLE `control_alimento_galpon`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=20;
 --
 -- AUTO_INCREMENT de la tabla `control_vacuna`
 --
 ALTER TABLE `control_vacuna`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=121;
 --
 -- AUTO_INCREMENT de la tabla `detalle_venta`
 --
 ALTER TABLE `detalle_venta`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=183;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=183;
 --
 -- AUTO_INCREMENT de la tabla `detalle_venta_huevo`
 --
 ALTER TABLE `detalle_venta_huevo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=67;
 --
 -- AUTO_INCREMENT de la tabla `edad`
 --
 ALTER TABLE `edad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=33;
 --
 -- AUTO_INCREMENT de la tabla `egreso_varios`
 --
 ALTER TABLE `egreso_varios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `fases`
 --
 ALTER TABLE `fases`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT de la tabla `fases_galpon`
 --
 ALTER TABLE `fases_galpon`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=38;
 --
 -- AUTO_INCREMENT de la tabla `galpon`
 --
 ALTER TABLE `galpon`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=58;
 --
 -- AUTO_INCREMENT de la tabla `grupo_control_alimento`
 --
 ALTER TABLE `grupo_control_alimento`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=63;
 --
 -- AUTO_INCREMENT de la tabla `grupo_edad`
 --
 ALTER TABLE `grupo_edad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=107;
 --
 -- AUTO_INCREMENT de la tabla `grupo_edad_temp`
 --
 ALTER TABLE `grupo_edad_temp`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=310;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=465;
 --
 -- AUTO_INCREMENT de la tabla `grupo_temperatura`
 --
 ALTER TABLE `grupo_temperatura`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=136;
 --
 -- AUTO_INCREMENT de la tabla `huevo`
 --
 ALTER TABLE `huevo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=184;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=185;
 --
 -- AUTO_INCREMENT de la tabla `huevo_acumulado`
 --
 ALTER TABLE `huevo_acumulado`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `huevo_deposito`
 --
 ALTER TABLE `huevo_deposito`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT de la tabla `ingreso_varios`
 --
@@ -3607,57 +4067,62 @@ ALTER TABLE `ingreso_varios`
 -- AUTO_INCREMENT de la tabla `maple`
 --
 ALTER TABLE `maple`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT de la tabla `postergar_vacuna`
 --
 ALTER TABLE `postergar_vacuna`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT de la tabla `postura_huevo`
 --
 ALTER TABLE `postura_huevo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=510;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=531;
 --
 -- AUTO_INCREMENT de la tabla `rango_edad`
 --
 ALTER TABLE `rango_edad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
 --
 -- AUTO_INCREMENT de la tabla `rango_temperatura`
 --
 ALTER TABLE `rango_temperatura`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
+--
+-- AUTO_INCREMENT de la tabla `seguir_alimentacion`
+--
+ALTER TABLE `seguir_alimentacion`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `sobrante`
 --
 ALTER TABLE `sobrante`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=333;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=333;
 --
 -- AUTO_INCREMENT de la tabla `temperatura`
 --
 ALTER TABLE `temperatura`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `tipo_caja`
 --
 ALTER TABLE `tipo_caja`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT de la tabla `tipo_huevo`
 --
 ALTER TABLE `tipo_huevo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT de la tabla `vacuna`
 --
 ALTER TABLE `vacuna`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=42;
 --
 -- AUTO_INCREMENT de la tabla `vacuna_emergente`
 --
@@ -3667,12 +4132,12 @@ ALTER TABLE `vacuna_emergente`
 -- AUTO_INCREMENT de la tabla `venta_caja`
 --
 ALTER TABLE `venta_caja`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=36;
 --
 -- AUTO_INCREMENT de la tabla `venta_huevo`
 --
 ALTER TABLE `venta_huevo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=22;
 --
 -- Restricciones para tablas volcadas
 --
@@ -3816,6 +4281,14 @@ ALTER TABLE `postura_huevo`
 --
 ALTER TABLE `rango_edad`
   ADD CONSTRAINT `rango_edad_ibfk_1` FOREIGN KEY (`id_alimento`) REFERENCES `alimento` (`id`);
+
+--
+-- Filtros para la tabla `seguir_alimentacion`
+--
+ALTER TABLE `seguir_alimentacion`
+  ADD CONSTRAINT `seguir_alimentacion_ibfk_1` FOREIGN KEY (`id_edad`) REFERENCES `edad` (`id`),
+  ADD CONSTRAINT `seguir_alimentacion_ibfk_2` FOREIGN KEY (`id_alimento`) REFERENCES `alimento` (`id`),
+  ADD CONSTRAINT `seguir_alimentacion_ibfk_3` FOREIGN KEY (`id_silo`) REFERENCES `silo` (`id`);
 
 --
 -- Filtros para la tabla `silo`
